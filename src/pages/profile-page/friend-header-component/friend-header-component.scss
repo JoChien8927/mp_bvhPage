@@ -1,0 +1,172 @@
+$main-blue: #0978ac;
+$main-gray: #cdcdcd;
+$alter-gray: #a1a1a1;
+
+.not-user-info {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+
+  margin-top: 4.5rem;
+  padding: 1rem 2rem;
+
+  .user-profile-about {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 40%;
+
+    .profile {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border-radius: 15px;
+      background-color: white;
+      gap: 1rem;
+      padding: 20px 25px;
+
+      .avatar {
+        border-radius: 100%;
+        height: fit-content;
+        width: 25%;
+      }
+
+      .info {
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .name-and-edit {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          .name {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 35px;
+            line-height: 42px;
+          }
+
+          .edit-profile-btn {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 18px;
+            border: 1px solid #c4c4c4;
+            border-radius: 15px;
+            padding: 10px 15px;
+          }
+        }
+
+        .username {
+          font-style: normal;
+          font-weight: 600;
+          font-size: 23.262px;
+          line-height: 28px;
+          color: #a1a1a1;
+        }
+
+        .about-him {
+          font-style: normal;
+          font-weight: 500;
+          font-size: 15px;
+          line-height: 18px;
+          color: #454545;
+        }
+
+        .keywords {
+          display: flex;
+          flex-direction: row;
+          gap: 0.5rem;
+
+          .keyword-tag {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 22px;
+            background: #f1f1f1;
+            border-radius: 12px;
+            padding: 2px 10px;
+            color: #1e1e1e;
+          }
+        }
+      }
+    }
+
+    .about {
+      border-radius: 15px;
+      background-color: white;
+      padding: 20px 25px;
+
+      .about-title {
+        font-style: normal;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 24px;
+      }
+
+      .about-description {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 18px;
+      }
+    }
+  }
+
+  .user-profile-stats {
+    border-radius: 15px;
+    width: 60%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 5px;
+
+    .title {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 15px;
+
+      .tag-list {
+        display: flex;
+        flex-direction: row;
+        gap: 1.8rem;
+
+        .tag {
+          font-style: normal;
+          font-weight: 600;
+          font-size: 18px;
+          line-height: 22px;
+          color: #9c9c9c;
+        }
+
+        .tag.active {
+          color: #454545;
+          text-decoration-line: underline;
+        }
+      }
+
+      .read-more-btn {
+        font-style: normal;
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 18px;
+        padding: 10px 15px;
+        border: 1px solid #c4c4c4;
+        border-radius: 15px;
+      }
+    }
+  }
+
+  .stat {
+    height: 75%;
+    margin: 5px 15px;
+    background-color: #d9d9d9;
+  }
+}

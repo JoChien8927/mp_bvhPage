@@ -1,0 +1,19 @@
+{
+  "login": {
+    "title": "Bienvenido!",
+    "subtitle": "Ingresa tus credenciales para iniciar sessión",
+    "username": "usuario",
+    "password": "contraseña",
+    "login": "Iniciar Sessión",
+    "create_account": "Crear Nueva Cuenta",
+    "new_account": {
+      "title": "Registro",
+      "first_name": "Nombre",
+      "last_name": "Apellido",
+      "email": "Correo",
+      "username": "Usuario",
+      "password": "Contraseña",
+      "register": "Registarse"
+    }
+  }
+}

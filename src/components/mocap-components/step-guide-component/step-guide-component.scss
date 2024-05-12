@@ -1,0 +1,27 @@
+.StepGuideComponentContainer{
+    min-width: 320px;
+    padding: 1%;
+    padding-top: 1%;
+
+    .StepInfoContainer{
+        padding-top: 10px;
+
+        .StepInfo{
+            margin-left: 8px;
+        }
+    }
+}
+
+.StepButtonContainer{
+    padding-top: 60vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.NextStepButtonContainer{
+    padding-top: 60vh;
+    display: flex;
+    align-items: center;
+    padding-left: 200px;
+}

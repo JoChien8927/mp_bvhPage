@@ -1,0 +1,51 @@
+.box {
+  padding-top: 55px;
+  border-bottom: 0.001em solid #a1a1a1;
+  min-width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+}
+
+.box .content {
+  width: 100%;
+  background-color: #e5e5e5;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  display: flex;
+}
+
+.menu-icon,
+.tab-icon {
+  cursor: pointer;
+  width: 100%;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.tab-icon svg {
+  margin: auto;
+  width: 15px;
+  height: 15px;
+}
+
+.menu-icon svg path,
+.tab-icon svg path {
+  fill: #c3c4c3 !important;
+}
+
+.menu-icon:hover svg path,
+.menu-icon.open svg path,
+.menu-icon.active svg path,
+.tab-icon:hover svg path,
+.tab-icon.active svg path {
+  fill: #0978ac !important;
+}
+
+.menu-icon:hover,
+.menu-icon.open,
+.tab-icon:hover {
+  background-color: #9be3ff;
+}

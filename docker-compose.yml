@@ -1,0 +1,19 @@
+version: "3.9"
+
+networks:
+  skel-3d_skel-back:
+    external: true
+
+services:
+  front:
+    restart: always
+    build: .
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    networks:
+      - skel-3d_skel-back

@@ -1,0 +1,72 @@
+$main-blue: #0978ac;
+$main-gray: #cdcdcd;
+$alter-gray: #a1a1a1;
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  margin-top: 4.5rem;
+  padding: 2rem;
+  background-color: white;
+
+  .avatar {
+    height: 6rem;
+    width: 6rem;
+    border-radius: 9999px;
+  }
+
+  .display-name {
+    font-size: 3rem;
+    line-height: 3.75rem;
+    font-weight: 500;
+  }
+
+  .username {
+    margin-top: 0.75rem;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 500;
+  }
+
+  .last-login {
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.25rem;
+    color: $alter-gray;
+  }
+
+  .keywords {
+    color: $alter-gray;
+    margin-top: 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .add-friend-btn {
+    color: $main-blue;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    width: 12rem;
+    margin-top: 1rem;
+    border: 1px solid $main-blue;
+    padding: 0.75rem 1rem;
+
+    .icon-add {
+      color: rgb(53, 118, 167);
+    }
+  }
+
+  .add-friend-btn-text {
+    width: 100%;
+    text-align: center;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: 300;
+  }
+}

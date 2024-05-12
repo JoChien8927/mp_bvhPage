@@ -1,0 +1,426 @@
+//scroll bar (global)
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 25px;
+  background-color: #c9c9c9;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 25px;
+  background-image: linear-gradient(#a1a1a1, #a1a1a1);
+}
+
+//user-pose-analysis
+.pose-analysis-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9f9f9;
+
+  .upac-icon-three-wrapper {
+    width: 3%;
+    padding: 0px 6px 0px 30px;
+    display: flex;
+    justify-content: center;
+
+    .upac-icon-three {
+      cursor: pointer;
+    }
+  }
+
+  .upahc-container {
+    width: 98%;
+    height: 107px;
+    margin: 73px 20px 0px 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #ffffff;
+
+    .upahc-user-photo {
+      width: 63px;
+      height: 63px;
+      margin: 0px 20px;
+      padding: 0px 6px 0px 6px;
+      border: 1px solid #ffffff;
+      border-radius: 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .upahc-video-title-wrapper {
+      padding-left: 20px;
+      flex-grow: 1;
+      display: flex;
+
+      .upahc-video-title,
+      .upahc-video-title-input {
+        font-size: 32px;
+        font-family: sans-serif;
+        font-weight: bold;
+      }
+
+      .upahc-edit-confirm-wrapper {
+        gap: 6px;
+        display: flex;
+        flex-direction: row;
+      }
+    }
+
+    .upahc-button-new-pose-analysis {
+      width: 15%;
+      margin-right: 30px;
+    }
+  }
+
+  .upabc-container {
+    width: 100%;
+    padding: 20px 20px 25px;
+    gap: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .upabc-left-body-wrapper {
+      width: 66%;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+
+      .upabc-left-option-wrapper {
+        height: 55px;
+        display: flex;
+        font-display: row;
+        align-items: center;
+
+        .upabc-left-option-select {
+          width: 50%;
+          font-size: 20px;
+          line-height: 42px;
+          border-bottom: 2px solid #c4c4c4;
+          font-family: sans-serif;
+          font-weight: bold;
+          display: flex;
+          justify-content: center;
+          cursor: pointer;
+
+          &.active,
+          &:hover {
+            border-bottom: 2px solid #0978ac;
+            color: #0978ac;
+          }
+        }
+      }
+
+      .upabc-left-option-content-container {
+        height: 775px;
+        display: flex;
+        flex-direction: column;
+
+        .upabc-video-content {
+          width: auto;
+          height: 615px;
+          margin: 30px 50px 15px;
+          display: flex;
+          justify-content: center;
+          background-color: #000000;
+        }
+
+        .upabc-video-playback-bar-wrapper {
+          width: 100%;
+          padding: 0px 50px;
+          position: relative;
+          display: flex;
+
+          .upabc-icon-comment-mark {
+            width: 37.29px;
+            height: 55.67px;
+            position: relative;
+            position: absolute;
+            top: -58px;
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+
+            .upabc-icon-part-photo {
+              width: 32.73px;
+              height: 32.73px;
+              z-index: 2;
+              border-radius: 50%;
+              border: 0px solid;
+              position: absolute;
+              top: 4.2px;
+              background-repeat: no-repeat;
+              background-size: cover;
+              background-position: center;
+            }
+          }
+
+          .upabc-video-playback-bar {
+            z-index: 1000;
+
+            // .rc-slider-track {
+            //   background-color: #d7f4ff;
+            // }
+            .rc-slider-track {
+              background-color: rgba(215, 244, 255, 50%);
+            }
+
+            .rc-slider-rail {
+              background-color: rgba(233, 233, 233, 40%);
+            }
+
+            .rc-slider-handle {
+              position: absolute;
+              z-index: 10000;
+            }
+          }
+
+          .upabc-indicator {
+            width: 20px;
+            z-index: 2;
+            position: absolute;
+
+            .rc-slider-track {
+              background-color: #d9342a;
+            }
+
+            .rc-slider-rail,
+            .rc-slider-handle {
+              display: none;
+            }
+
+            &.active {
+              .rc-slider-track {
+                background-color: #27d286;
+              }
+            }
+          }
+
+          // .upabc-video-playback-bar-handler {
+          //   // width: 92%;
+          //   width: 100%;
+          //   z-index: 3;
+          //   position: absolute;
+
+          //   .rc-slider-rail,
+          //   .rc-slider-track {
+          //     display: none;
+          //   }
+          // }
+        }
+
+        .upabc-video-control-wrapper {
+          width: 100%;
+          padding: 10px 50px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          .upabc-icon-play-pause svg {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+          }
+
+          .upabc-play-speed-wrapper {
+            width: 10%;
+            padding: 0px 0px 0px 12px;
+            font-size: 1.4em;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+
+            .upabc-play-speed {
+              cursor: pointer;
+            }
+          }
+
+          .upabc-video-duration {
+            padding: 0px 0px 0px 12px;
+            gap: 0.25rem;
+            flex-grow: 1;
+            font-weight: bold;
+            display: flex;
+            justify-content: flex-start;
+          }
+
+          .upabc-icon-repeat svg {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            cursor: pointer;
+          }
+
+          .upabc-icon-play-pause.active svg path,
+          .upabc-icon-play-pause:hover svg path,
+          .upabc-icon-repeat.active svg path,
+          .upabc-icon-repeat:hover svg path {
+            fill: #0978ac !important;
+          }
+        }
+      }
+    }
+
+    .upabc-right-body-wrapper {
+      width: 34%;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+
+      .upabc-right-option-wrapper {
+        height: 55px;
+        display: flex;
+        font-display: row;
+        align-items: center;
+
+        .upabc-right-option-select {
+          width: 100%;
+          font-size: 20px;
+          line-height: 42px;
+          border-bottom: 2px solid #c4c4c4;
+          font-family: sans-serif;
+          font-weight: bold;
+          display: flex;
+          justify-content: center;
+
+          &.active,
+          &:hover {
+            border-bottom: 2px solid #0978ac;
+            color: #0978ac;
+          }
+        }
+      }
+
+      .upabc-right-option-content-container {
+        height: 725px;
+        margin: 30px 20px 20px;
+        overflow-y: auto;
+        // visibility: hidden;
+
+        // &:hover {
+        //   visibility: visible;
+        // }
+
+        .upabc-instruction-comment {
+          width: 100%;
+          visibility: visible;
+
+          .upabc-ic-card-container {
+            width: 556px;
+            margin: 3px 20px 15px 10px;
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid #c4c4c4;
+            transition: all 0.1s ease-in;
+            display: flex;
+            flex-direction: column;
+            filter: opacity(50%);
+
+            &.active,
+            &:hover {
+              border: 1px solid #0978ac;
+              background-color: #d7f4ff;
+              filter: opacity(100%);
+
+              .upabc-ic-card-header-wrapper {
+                padding-top: 5px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .upabc-ic-card-header-time {
+                  width: 89%;
+                  padding-left: 5px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  font-family: sans-serif;
+                  color: #0978ac;
+                }
+
+                .upabc-ic-card-header-instructor-photo {
+                  width: 28px;
+                  height: 28px;
+                  border-radius: 50%;
+                  background-repeat: no-repeat;
+                  background-size: cover;
+                  background-position: center;
+                }
+              }
+
+              .upabc-ic-card-footer-comment {
+                width: 100%;
+                padding: 20px 5px 10px;
+                font-size: 15px;
+                font-weight: 600;
+                font-family: sans-serif;
+                color: #000000;
+
+                .upabc-ic-card-textarea {
+                  width: 100%;
+                }
+
+                .upabc-ic-card-edit-confirm-wrapper {
+                  gap: 6px;
+                  display: flex;
+                  flex-direction: row;
+                }
+              }
+            }
+
+            .upabc-ic-card-header-wrapper {
+              padding-top: 5px;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+
+              .upabc-ic-card-header-time {
+                width: 89%;
+                padding-left: 5px;
+                font-size: 15px;
+                font-weight: 600;
+                font-family: sans-serif;
+                color: #a1a1a1;
+              }
+
+              .upabc-ic-card-header-instructor-photo {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center;
+              }
+            }
+
+            .upabc-ic-card-footer-comment {
+              width: 100%;
+              padding: 20px 5px 10px;
+              font-size: 15px;
+              font-weight: 600;
+              font-family: sans-serif;
+              color: #a1a1a1;
+
+              .upabc-ic-card-textarea {
+                width: 100%;
+              }
+
+              .upabc-ic-card-edit-confirm-wrapper {
+                gap: 6px;
+                display: flex;
+                flex-direction: row;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

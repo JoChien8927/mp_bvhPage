@@ -1,0 +1,13 @@
+.ant-upload-text-icon {
+  display: none;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .search-bar {
+    width: 300px;
+  }
+}

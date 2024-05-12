@@ -1,0 +1,129 @@
+.user-card {
+  .user-wrapper {
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px #a1a1a1;
+    -webkit-box-shadow: 0px 0px 5px 0px #a1a1a1;
+    -moz-box-shadow: 0px 0px 5px 0px #a1a1a1;
+
+    .user-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .user-options {
+        margin-left: auto;
+
+        .user-options-icon {
+          cursor: pointer;
+          transition: 0.3s;
+          display: flex;
+          justify-content: center;
+
+          &:hover {
+            div {
+              svg {
+                path {
+                  fill: #0978ac !important;
+                }
+              }
+            }
+          }
+
+          div {
+            display: flex;
+            vertical-align: middle;
+
+            svg {
+              margin: auto;
+              width: 15px;
+              height: 15px;
+
+              path {
+                fill: #a1a1a1 !important;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .user-info {
+      text-align: center;
+
+      .user-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .user-image {
+        width: 50%;
+        margin: auto;
+        border-radius: 50%;
+      }
+
+      .user-status {
+        font-size: 0.5rem;
+        display: inline-block;
+        color: #9c9c9c;
+        padding: 5px 10px;
+        margin: 5px;
+        border: 1px solid #9c9c9c;
+        border-radius: 20px;
+
+        &.accepted {
+          font-weight: bold;
+          color: #0978ac;
+          border: 1px solid #0978ac;
+        }
+      }
+
+      .user-date {
+        font-size: 0.6rem;
+        color: #c4c4c4;
+      }
+    }
+
+    .user-preview {
+      width: 100%;
+      height: 150px;
+      margin: 15px 0px;
+      background-color: #f1f1f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .user-preview-image {
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+      }
+    }
+
+    .user-footer {
+      .user-name {
+        font-size: 1.2em;
+      }
+      .user-tags {
+        color: #9c9c9c;
+        margin-bottom: 10px;
+      }
+
+      .user-button {
+        cursor: pointer;
+        text-align: center;
+        padding: 5px 10px;
+        border-radius: 10px;
+        border: 1px solid #c4c4c4;
+        transition: 0.3s;
+
+        &:hover {
+          color: #fff;
+          background-color: #0978ac;
+        }
+      }
+    }
+  }
+}

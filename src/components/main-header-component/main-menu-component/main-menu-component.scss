@@ -1,0 +1,84 @@
+.main-menu-container {
+  .district-divide {
+    width: 100%;
+    height: 2px;
+    margin-bottom: 20px;
+    background: #e2e2e2;
+  }
+
+  .main-menu-user-profile {
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    background: #ffffff;
+
+    .user-profile-photo {
+      width: 68px;
+      height: 68px;
+      padding: 5%;
+      border: 1px solid #ffffff;
+      border-radius: 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+    }
+
+    .main-menu-user-info-district {
+      width: 66%;
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+
+      .user-name {
+        width: 100%;
+        padding-top: 4px;
+        font-size: 1.5em;
+        font-family: sans-serif;
+        font-weight: bold;
+      }
+
+      .user-username {
+        width: 100%;
+        height: 25px;
+        font-size: 1.1em;
+        font-weight: 500;
+        color: #a1a1a1;
+      }
+    }
+  }
+
+  .mmc-button-edit-profile {
+    padding-bottom: 20px;
+  }
+
+  .main-menu-option-district {
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .main-menu-badge {
+      width: 10.5%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .main-menu-option-wrapper {
+      width: 89.5%;
+      display: flex;
+
+      .main-menu-option {
+        font-size: 1.2em;
+        font-family: sans-serif;
+        font-weight: bold;
+        cursor: pointer;
+
+        &.active,
+        &:hover {
+          color: #0978ac;
+        }
+      }
+    }
+  }
+}

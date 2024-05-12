@@ -1,0 +1,93 @@
+.video-preview-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .user-image {
+    width: 40px;
+    margin-right: 10px;
+    border-radius: 50%;
+  }
+
+  .info {
+    .date {
+      color: #0978ac;
+    }
+  }
+
+  .options {
+    margin-left: auto;
+
+    .options-icon {
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      justify-content: center;
+
+      &:hover {
+        div {
+          svg {
+            path {
+              fill: #0978ac !important;
+            }
+          }
+        }
+      }
+
+      div {
+        display: flex;
+        vertical-align: middle;
+
+        svg {
+          margin: auto;
+          width: 15px;
+          height: 15px;
+
+          path {
+            fill: #a1a1a1 !important;
+          }
+        }
+      }
+    }
+  }
+
+  &.sm {
+    .user-image {
+      width: 30px;
+      height: 30px;
+    }
+
+    .info {
+      padding: 0 5px;
+      .user-name {
+        font-size: 0.7rem;
+        font-weight: bold;
+      }
+
+      .date {
+        font-size: 0.6rem;
+        color: #9c9c9c;
+      }
+    }
+  }
+
+  &.lg {
+    .user-image {
+      width: 50px;
+      height: 50px;
+    }
+
+    .info {
+      padding: 0 5px;
+      .user-name {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .date {
+        font-size: 0.9rem;
+        color: #9c9c9c;
+      }
+    }
+  }
+}

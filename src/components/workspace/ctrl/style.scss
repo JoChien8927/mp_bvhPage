@@ -1,0 +1,96 @@
+#drawer-container {
+  border: 0 !important;
+}
+
+.MuiAccordionDetails-root {
+  padding: 5px !important;
+}
+
+.MuiAccordion-root.Mui-expanded {
+  margin: 0px !important;
+}
+
+.MuiAccordionSummary-content {
+  margin: 0px !important;
+}
+
+.MuiAccordionSummary-root.Mui-expanded,
+.MuiAccordionSummary-root,
+.MuiPaper-elevation1 {
+  margin: 0px !important;
+}
+
+.MuiPaper-elevation1 {
+  box-shadow: none !important;
+  border-bottom: 1px solid #ececec;
+  border-top: 1px solid #ececec;
+
+  .MuiAccordionSummary-root.Mui-expanded {
+    border-bottom: 1px solid #ececec;
+  }
+}
+
+.PlaybackBar {
+  .rc-slider-rail {
+    background-color: rgba($color: #cccccc, $alpha: 0.4);
+  }
+
+  .rc-slider-track {
+    background-color: rgba($color: rgb(61, 61, 61), $alpha: 0.4);
+  }
+
+  .rc-slider-handle {
+    border: none;
+    background-color: rgba($color: rgb(61, 61, 61), $alpha: 1);
+  }
+}
+
+.ControlsWrapper {
+  background-color: #ffffff;
+  height: 64px;
+}
+
+.PlaybackWrapper {
+  position: relative;
+  width: 100%;
+
+  .ErrorIndicator {
+    position: absolute !important;
+    background-color: #ffffff;
+
+    .rc-slider-rail {
+      background-color: rgba($color: #cccccc, $alpha: 1);
+    }
+
+    .rc-slider-handle {
+      display: none;
+    }
+  }
+}
+
+.CenterContent {
+  text-align: center;
+}
+
+.SpeedDropDown {
+  border: none !important;
+  background-color: #ffff !important;
+  box-shadow: none !important;
+}
+
+.play-back-icon svg {
+  cursor: pointer;
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  padding: 10px;
+}
+
+.play-back-icon svg path {
+  fill: #c3c4c3 !important;
+}
+
+.play-back-icon:hover svg path,
+.play-back-icon.active svg path {
+  fill: #0978ac !important;
+}

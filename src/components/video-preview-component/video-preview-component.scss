@@ -1,0 +1,67 @@
+.video-preview-modal-wrapper {
+  .ant-modal-header {
+    padding: 2.5px 24px;
+  }
+
+  .preview-options {
+    display: flex;
+    justify-content: space-between;
+
+    .pose-info {
+      text-align: left;
+
+      .pose-name {
+        font-weight: bold;
+      }
+    }
+
+    .button-options {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+  }
+}
+
+.video-preview-wrapper {
+  width: 100%;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .pose-preview-image {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    .pose-preview-image-hover {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      transition: 0.3s;
+      justify-content: center;
+    }
+
+    &:hover {
+      .pose-preview-image-hover {
+        background-color: rgba($color: #000000, $alpha: 0.1);
+      }
+    }
+  }
+
+  &.sm {
+    .pose-preview-image-hover {
+      .play-icon {
+        svg {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+  }
+}

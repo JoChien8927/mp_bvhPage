@@ -1,0 +1,48 @@
+.user-header {
+  padding: 10px 0px;
+  width: 100%;
+
+  .user-background {
+    height: 300px;
+    width: 100%;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .user-details {
+    width: 100%;
+
+    .user-info-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid #f9f9f9;
+
+      .user-personal-info {
+        .user-name {
+          font-size: 2em;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .user-stats {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+
+      .user-stat {
+        margin: 10px;
+        text-align: center;
+
+        .title {
+          font-weight: bold;
+          font-size: 1.2em;
+        }
+      }
+    }
+  }
+}

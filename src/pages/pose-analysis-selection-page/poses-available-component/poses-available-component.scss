@@ -1,0 +1,125 @@
+.pose-analysis-selection {
+  min-width: 375px;
+  padding: 20px 0px;
+  border-radius: 15px;
+  background-color: #fff;
+
+  .filters {
+    padding: 0px 20px;
+    .search-bar {
+      // width: calc(100% -70px );
+      width: 100%;
+    }
+
+    .filter-icon-wrapper {
+      cursor: pointer;
+      height: 34px;
+      width: 34px;
+      border-radius: 50px;
+      border: 1px solid #c4c4c4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      float: right;
+      transition: all 0.5s ease;
+
+      .filter-icon {
+        svg {
+          margin: auto;
+          width: 18px;
+          height: 18px;
+
+          path {
+            // fill: #a1a1a1 !important;
+          }
+        }
+      }
+
+      &:hover {
+        background-color: #0978ac;
+
+        .filter-icon {
+          svg {
+            path {
+              fill: #fff !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .poses-available {
+    max-height: calc(100% - 35px);
+    padding: 10px 20px;
+    margin: 0px 0px;
+    width: 100%;
+    overflow-y: auto;
+
+    .pose-available {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      border: 1px solid #c4c4c4;
+      margin: 15px 0;
+      padding: 15px 15px;
+      border-radius: 15px;
+      transition: all 0.2s ease-in;
+
+      &:hover {
+        box-shadow: 0px 0px 5px 0px #a1a1a1;
+        -webkit-box-shadow: 0px 0px 5px 0px #a1a1a1;
+        -moz-box-shadow: 0px 0px 5px 0px #a1a1a1;
+      }
+
+      .pose-preview {
+        min-width: 100px;
+        height: 70px;
+      }
+
+      .content {
+        padding: 0px 0px 0px 15px;
+        .header {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+
+          .photo {
+            width: 30px;
+            height: 30px;
+            img {
+              width: 30px;
+              height: 30px;
+              border-radius: 50%;
+            }
+          }
+
+          .info {
+            padding: 0 5px;
+            .user-name {
+              font-size: 0.7rem;
+              font-weight: bold;
+            }
+
+            .date {
+              font-size: 0.6rem;
+              color: #9c9c9c;
+            }
+          }
+        }
+
+        .body {
+          .title {
+            font-size: 0.8rem;
+            font-weight: bold;
+          }
+
+          .tags {
+            font-size: 0.7rem;
+            color: #9c9c9c;
+          }
+        }
+      }
+    }
+  }
+}

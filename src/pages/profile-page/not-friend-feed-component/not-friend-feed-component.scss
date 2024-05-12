@@ -1,0 +1,36 @@
+$main-blue: #0978ac;
+$main-gray: #cdcdcd;
+$alter-gray: #a1a1a1;
+
+.not-feed-content {
+  margin-top: 2rem;
+  padding: 4rem;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  .feed-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .protected-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 500;
+    color: $main-gray;
+  }
+
+  .protected-description {
+    font-size: 1rem;
+    line-height: 1.25rem;
+    max-width: 18rem;
+    text-align: center;
+    color: $alter-gray;
+  }
+}

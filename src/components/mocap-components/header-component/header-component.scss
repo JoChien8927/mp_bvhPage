@@ -1,0 +1,14 @@
+.mocapHeaderOutline{
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-sizing: 0px 2px 5px #e1e1e1;
+    height: 6vh;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+
+    .logo{
+        font-weight: 500;
+        font-size: 20px;
+        padding-left: 15px;
+    }
+}

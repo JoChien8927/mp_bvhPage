@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+TC");
+@import url("https://fonts.googleapis.com/css?family=Nunito+Sans:wght@600");
+
+.skeleton-body {
+  font-family: "Noto Sans TC", sans-serif !important;
+}
+
+.skeleton-button {
+  background: white;
+  border-color: #78c9ef;
+  border-radius: 1000px;
+  width: 100%;
+  text-decoration: none;
+  border-style: solid;
+  height: 46px;
+  color: #78c9ef;
+  font-family: "Noto Sans TC", sans-serif;
+}
+
+.skeleton-button:hover {
+  background: #78c9ef;
+  color: black;
+}

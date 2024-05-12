@@ -1,0 +1,19 @@
+{
+  "login": {
+    "title": "歡迎回來！",
+    "subtitle": "Enter your credintials to login",
+    "username": "username",
+    "password": "password",
+    "login": "Login",
+    "create_account": "Create New Account",
+    "new_account": {
+      "title": "New Account",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "username": "Username",
+      "password": "Password",
+      "register": "Register"
+    }
+  }
+}

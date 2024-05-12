@@ -1,0 +1,23 @@
+{
+  "login": {
+    "title": "Welcome Back!",
+    "subtitle": "Enter your credentials to login",
+    "username": "username",
+    "password": "password",
+    "login": "Login",
+    "create_account": "Create New Account",
+    "new_account": {
+      "title": "New Account",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "username": "Username",
+      "password": "Password",
+      "register": "Register",
+      "success_modal": {
+        "title": "Account Created",
+        "body": "Your account has been successfully created."
+      }
+    }
+  }
+}
