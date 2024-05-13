@@ -17,10 +17,10 @@ import video2 from "../../assets/pitching/cam2.mp4";
 import video3 from "../../assets/pitching/cam3.mp4";
 import video4 from "../../assets/pitching/cam4.mp4";
 // import SKELETON from "../../assets/batting/kpts_3d_batting.bvh";
-// import video1 from "../../assets/batting/cam1.MP4";
-// import video2 from "../../assets/batting/cam2.MP4";
-// import video3 from "../../assets/batting/cam3.MP4";
-// import video4 from "../../assets/batting/cam4.MP4";
+// import video1 from "../../assets/batting/cam1.mp4";
+// import video2 from "../../assets/batting/cam2.mp4";
+// import video3 from "../../assets/batting/cam3.mp4";
+// import video4 from "../../assets/batting/cam4.mp4";
 
 
 import bat_model from "../../assets/model/baseballbat.gltf";
@@ -363,7 +363,7 @@ class BaseballWorkspace extends React.Component {
         this.baseballBat = batModel.scene;  
         // scene.add(this.baseballBat); //sport switch
         this.baseballBat.scale.set(3, 3, 3);    
-        this.baseballBat.rotation.set(0, 0, 90);
+        // this.baseballBat.rotation.set(0, 0, 90);
         
         
         // Handling the baseball
