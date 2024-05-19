@@ -343,7 +343,7 @@ def main(args):
     ''' this will load the sample videos if no camera ID is given '''
     streams = []
     projections=[]
-    cam_parm_folder = "src/camera_parameters/{}".format(args["type"])
+    cam_parm_folder = "public/camera_parameters/{}".format(args["type"])
     motion_folder = "public/motion/{}".format(args["type"])
     for idx in [1,2,3,4]:
         # streams.append("public/motion/{}/cam{}.mp4".format(args["type"],idx))
