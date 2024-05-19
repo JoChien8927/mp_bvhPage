@@ -74,6 +74,7 @@ def run_mp(input_stream1, input_stream2, input_stream3, input_stream4, P0, P1, P
     
     # get the video information
     fps = cap0.get(cv2.CAP_PROP_FPS)
+    print("=Vids Input fps: ", fps)
     h = int(cap0.get(cv2.CAP_PROP_FRAME_HEIGHT))
     w = int(cap0.get(cv2.CAP_PROP_FRAME_WIDTH))
     size = (2*w, 2*h)
@@ -272,6 +273,8 @@ def run_mp(input_stream1, input_stream2, input_stream3, input_stream4, P0, P1, P
         size = (2*w, 2*h)
         ConcatFrame = frameConcatenate(frame0, frame1, frame2, frame3, h, w)
         ConcatFrame = cv2.resize(ConcatFrame, size, interpolation=cv2.INTER_AREA)
+        # re-scale the ConcatFrame to 1080x1920
+        ConcatFrame = cv2.resize(ConcatFrame, (1920, 1080), interpolation=cv2.INTER_AREA)
         cv2.imshow('Concat Frame', ConcatFrame)
         # videoWriter.write(ConcatFrame)
 
@@ -285,7 +288,7 @@ def run_mp(input_stream1, input_stream2, input_stream3, input_stream4, P0, P1, P
         cap.release()
     
     # show last keypoints in 3d 
-    print("mp last 3d keypoints: ", kpts_3d[-1])
+    # print("mp last 3d keypoints: ", kpts_3d[-1])
     return np.array(kpts_cam0), np.array(kpts_cam1), np.array(kpts_cam2), np.array(kpts_cam3), np.array(kpts_3d)
 
 def get_center(a, b):
@@ -303,16 +306,17 @@ def get_spine(a, b):
     return center
 
 
-def write_mediapipe_bvh(outbvhfilepath, prediction3dpoint):
+def write_mediapipe_bvh(outbvhfilepath, prediction3dpoint,fps):
     bvhfileName = outbvhfilepath
     skeleton = mediapipe_skeleton.MediapipeSkeleton()
     # print("mp skeleton", mediapipe_skeleton)
-    skeleton.poses2bvh(prediction3dpoint, output_file=bvhfileName)
+    skeleton.poses2bvh(prediction3dpoint, output_file=bvhfileName,fps=fps)
+    print("=BVH file saved: ", bvhfileName)
 
 
 
 
-def process_file(keypoints_input,outputfile):
+def process_file(keypoints_input,outputfile,fps):
     predictions = read_keypoints(keypoints_input)
     predictions_copy = np.zeros((predictions.shape[0], 26, 3))
 
@@ -332,16 +336,18 @@ def process_file(keypoints_input,outputfile):
             predictions_copy[frame][index][1] = res[name][1]*50
             predictions_copy[frame][index][2] = res[name][0]*50
         
-    print("Generating bvh")
-    write_mediapipe_bvh(outputfile, predictions_copy)
+    print("Generating bvh...")
+    write_mediapipe_bvh(outputfile, predictions_copy,fps)
 
 def main(args):
     ''' this will load the sample videos if no camera ID is given '''
     streams = []
     projections=[]
-    cam_parm_folder = "./camera_parameters/{}".format(args["type"])
+    cam_parm_folder = "src/camera_parameters/{}".format(args["type"])
+    motion_folder = "public/motion/{}".format(args["type"])
     for idx in [1,2,3,4]:
-        streams.append("src/assets/{}/cam{}.mp4".format(args["type"],idx))
+        # streams.append("public/motion/{}/cam{}.mp4".format(args["type"],idx))
+        streams.append(f"{motion_folder}/cam{idx}.mp4")
         intrinsic = "{}/cam{}.dat".format(cam_parm_folder,idx)
         extrinsic = "{}/rot_trans_cam{}.dat".format(cam_parm_folder, idx)
         ''' get projection matrices '''
@@ -357,14 +363,23 @@ def main(args):
     kpts_cam0, kpts_cam1, kpts_cam2, kpts_cam3, kpts_3d = run_mp(streams[0], streams[1], streams[2], streams[3], projections[0], projections[1], projections[2], projections[3])
     # kpts_cam0, kpts_cam1, kpts_cam2, kpts_cam3, kpts_3d = run_mp(input_stream1, input_stream2, input_stream3, input_stream4, projections[0], projections[1], projections[2], projections[3])
     
+    cap = cv2.VideoCapture(streams[0])
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    # 無條件進位
+    adjusted_fps = math.ceil(fps)
+    # adjusted_fps = 60
+    print("=Adjusted fps: ", adjusted_fps)
+    cap.release()
 
     #this will create keypoints file in current working folder
     # write_keypoints_to_disk('kpts_cam0.dat', kpts_cam0)
     # write_keypoints_to_disk('kpts_cam1.dat', kpts_cam1)
     keypoint_file='kpts_3d_{}.dat'.format(args["type"])
     write_keypoints_to_disk(keypoint_file, kpts_3d)
-    print('started')
-    process_file(keypoint_file,"src/assets/{}/kpts_3d_{}.bvh".format(args["type"], args["type"]))
+    print('Reading keypoints ...')
+    process_file(keypoint_file
+                 ,"{}/kpts_3d_{}.bvh".format(motion_folder, args["type"])
+                 ,fps)
 
 if __name__ == "__main__":
     #construct ap = argparse.ArgumentParser()
@@ -372,7 +387,7 @@ if __name__ == "__main__":
     # ap.add_argument("-path", "--path", type=str, required=False,
 	#                 help="path to video files",default="./media/boxing" )
     ap.add_argument("-type", "--type", type=str, required=False,
-	                help="sports type",default="boxing")
+	                help="sports type",default="pitching")
     # ap.add_argument("-cal", "--calibration_id", type=str, required=True,
 	#                 help="path to ")
     # ap.add_argument("-rec", "--recording_id", type=str, required=True,

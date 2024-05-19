@@ -63,7 +63,7 @@ def write_bvh(output_file, header, channels, frame_rate=30):
     output_file = Path(output_file)
     if not output_file.parent.exists():
         os.makedirs(output_file.parent)
-    
+    print(f'Writing BVH file with frame rate {frame_rate} ...')
     with output_file.open('w') as f:
         f.write('HIERARCHY\n')
         write_header(writer=f, node=header.root, level=0)

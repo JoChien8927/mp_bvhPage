@@ -14,7 +14,8 @@ import { ProfilePage } from "./profile-page/profile-page";
 import { PosesPage } from "./poses-page/poses-page";
 import { PosePage } from "./pose-page/pose-page";
 import { PoseAnalysisSelectionPage } from "./pose-analysis-selection-page/pose-analysis-selection-page";
-import { baseballbvhPage } from "./baseballbvh-page/baseballbvh-page";
+
+
 import { StyleAction } from "../redux/style/style-action";
 import "./general-style.scss";
 import { CalibrationPage } from "./calibration-page/calibration-page";
@@ -24,8 +25,9 @@ import { CalibrationHomePage } from "./calibration-home-page/calibration-home-pa
 import { RecordingHomePage } from "./recording-home-page/recording-home-page";
 import { RecordingPage } from "./recording-page/recording-page";
 // (/≧▽≦)/
-import { baseballbvhVisualizePage } from './baseballbvh-visualize-page/baseballbvh-visualize-page';
-
+import { batVisPage } from "./bat-vis-page/bat-vis-page";
+import { pitchVisPage } from "./pitch-vis-page/pitch-vis-page";
+import { baseballbvhPage } from "./baseballbvh-page/baseballbvh-page";
 
 
 
@@ -97,8 +99,9 @@ class Component extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/baseballbvh-visualize-page" component={baseballbvhVisualizePage} />
           <Route path="/baseballbvh-page" component={baseballbvhPage} />
+          <Route path="/bat-vis-page" component={batVisPage} />
+          <Route path="/pitch-vis-page" component={pitchVisPage} />
         </Switch>
       </Router>
     );

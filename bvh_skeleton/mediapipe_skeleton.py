@@ -304,7 +304,7 @@ class MediapipeSkeleton(object):
 
         return channel
 
-    def poses2bvh(self, poses_3d, header=None, output_file=None):
+    def poses2bvh(self, poses_3d,fps, header=None, output_file=None):
         if not header:
             header = self.get_bvh_header(poses_3d)
 
@@ -313,6 +313,6 @@ class MediapipeSkeleton(object):
             channels.append(self.pose2euler(pose, header))
 
         if output_file:
-            bvh_helper.write_bvh(output_file, header, channels)
+            bvh_helper.write_bvh(output_file, header, channels,fps)
 
         return channels, header

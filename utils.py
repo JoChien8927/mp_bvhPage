@@ -197,7 +197,7 @@ def read_keypoints(filename):
         kpts.append(line)
 
     kpts = np.array(kpts)
-    print(kpts)
+    # print(kpts)
     return kpts
 
 from bvh_skeleton import mediapipe_skeleton
@@ -208,7 +208,7 @@ def write_mediapipe_bvh(outbvhfilepath,indatfilepath):
     print(prediction3dpoint.shape)
 
 
-    # å°?é¢?æµ??????¹æ?¾å¤§100???
+    # ï¿½?ï¿½?ï¿½??????ï¿½ï¿½?ï¿½å¤§100???
     for frame in prediction3dpoint:
         # print(frame)
         for point3d in frame:
