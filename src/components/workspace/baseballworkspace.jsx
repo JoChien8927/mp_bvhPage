@@ -14,7 +14,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 //models
 import bat_model from "../../assets/model/baseballbat.gltf";
-import basebaseball_model from "../../assets/model/baseball/baseball.gltf";
+import basebaseball_model from "../../assets/model/baseball/gr_baseball.gltf";
 import grass_texture from "../../assets/texture/ograss_tex.jpg";
 
 
@@ -113,7 +113,7 @@ class BaseballWorkspace extends React.Component {
       var virtualbat_length = 0;      
       const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });  
       const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });  
-
+      const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
 
       const loadpose = new Promise((resolve, reject) => {
@@ -157,6 +157,7 @@ class BaseballWorkspace extends React.Component {
           ballloader.load(basebaseball_model, resolve);
 
       });
+
       const loadvideo = new Promise((resolve, reject) => {
         this.videoFirst.addEventListener('loadeddata', resolve);
         this.videoSecond.addEventListener('loadeddata', resolve);
@@ -377,7 +378,7 @@ class BaseballWorkspace extends React.Component {
         
         if (this.state.currentSportType == 'batting') {
           // Handling the baseball bat
-          this.baseballBat.scale.set(3, 3, 3);    
+          this.baseballBat.scale.set(2.5, 2.5, 2.5);    
           this.baseballBat.rotation.set(0, 0, 90);
           scene.add(this.baseballBat); //sport switch
         }
