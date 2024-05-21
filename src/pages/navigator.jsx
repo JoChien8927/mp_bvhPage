@@ -29,7 +29,7 @@ import { batVisPage } from "./bat-vis-page/bat-vis-page";
 import { pitchVisPage } from "./pitch-vis-page/pitch-vis-page";
 import { baseballbvhPage } from "./baseballbvh-page/baseballbvh-page";
 
-
+import { demoVisPage } from "./demo-vis-page/demo-vis-page"
 
 class Component extends React.Component {
   constructor(props) {
@@ -102,6 +102,7 @@ class Component extends React.Component {
           <Route path="/baseballbvh-page" component={baseballbvhPage} />
           <Route path="/bat-vis-page" component={batVisPage} />
           <Route path="/pitch-vis-page" component={pitchVisPage} />
+          <Route path="/demo-vis-page" component={demoVisPage}/>
         </Switch>
       </Router>
     );

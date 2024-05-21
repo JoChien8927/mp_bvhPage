@@ -49,13 +49,13 @@ class BaseballWorkspace extends React.Component {
         },
         currentSportType: this.props.sportType, // Initialize currentSportType from props
         motion_fps : this.props.fps,
-        skeleton_path: process.env.PUBLIC_URL+"/motion/"+this.props.sportType+"/kpts_3d_"+this.props.sportType+".bvh",
-        videoFirst_path : process.env.PUBLIC_URL+"/motion/"+this.props.sportType+"/cam1.MP4",
-        videoSecond_path : process.env.PUBLIC_URL+"/motion/"+this.props.sportType+"/cam2.MP4",
-        videoThird_path : process.env.PUBLIC_URL+"/motion/"+this.props.sportType+"/cam3.MP4",
-        videoFourth_path : process.env.PUBLIC_URL+"/motion/"+this.props.sportType+"/cam4.MP4",
-        bat_motion : process.env.PUBLIC_URL+"/motion/"+"empty"+"/bat_motion.json",
-        baseball_motion : process.env.PUBLIC_URL+"/motion/"+"empty"+"/baseball_motion.json",
+        skeleton_path: process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/kpts_3d_"+this.props.sportType+".bvh",
+        videoFirst_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam1.MP4",
+        videoSecond_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam2.MP4",
+        videoThird_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam3.MP4",
+        videoFourth_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam4.MP4",
+        bat_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/bat_motion.json",
+        baseball_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/baseball_motion.json",
 
       };
 
@@ -73,30 +73,28 @@ class BaseballWorkspace extends React.Component {
       }
     }
     updateInternalState = (sportType, fps) => {
-    if (this.state.currentSportType === 'pitching' && sportType === 'demo_p') {
+    this.setState({
+      currentSportType: this.props.sportType,
+      skeleton_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/kpts_3d_${this.props.sportType}.bvh`,
+      videoFirst_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam1.MP4`,
+      videoSecond_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam2.MP4`,
+      videoThird_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam3.MP4`,
+      videoFourth_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam4.MP4`,
+    });
+    if (this.state.currentSportType === 'pitching' ) {
       this.setState({
       currentSportType: this.props.sportType,
       motion_fps: fps,
-      skeleton_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/kpts_3d_${this.props.sportType}.bvh`,
-      videoFirst_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam1.MP4`,
-      videoSecond_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam2.MP4`,
-      videoThird_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam3.MP4`,
-      videoFourth_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam4.MP4`,
-      bat_motion: `${process.env.PUBLIC_URL}/motion/empty/bat_motion.json`,
-      baseball_motion: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/baseball_motion.json`,
+      bat_motion: `${process.env.PUBLIC_URL}/exp/empty/bat_motion.json`,
+      baseball_motion: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/baseball_motion.json`,
     });
-    }else if (this.state.currentSportType === 'batting' && sportType === 'demo_b') {
+    }else if (this.state.currentSportType === 'batting') {
       this.setState({
-      currentSportType: this.props.sportType,
-      motion_fps: fps,
-      skeleton_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/kpts_3d_${this.props.sportType}.bvh`,
-      videoFirst_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam1.MP4`,
-      videoSecond_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam2.MP4`,
-      videoThird_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam3.MP4`,
-      videoFourth_path: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/cam4.MP4`,
-      bat_motion: `${process.env.PUBLIC_URL}/motion/${this.props.sportType}/bat_motion.json`,
-      baseball_motion: `${process.env.PUBLIC_URL}/motion/empty/baseball_motion.json`,
+      bat_motion: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/bat_motion.json`,
+      baseball_motion: `${process.env.PUBLIC_URL}/exp/empty/baseball_motion.json`,
     });
+    
+
     }
     
   }
@@ -179,6 +177,7 @@ class BaseballWorkspace extends React.Component {
             myPromise.then((baseball_motion) => {
               console.log("baseball_motion:",baseball_motion);
               const numFrames = baseball_motion.x.length;
+              console.log("ball :",this.state.motion_fps);
               
               for (let i = 0; i < numFrames; i++) {
                   times.push(i * 1 / this.state.motion_fps); 
@@ -215,7 +214,6 @@ class BaseballWorkspace extends React.Component {
 
             for (let i = 0; i < numFrames; i++) {
                 times.push(i / this.state.motion_fps); 
-                
                 const knobPos = new THREE.Vector3(bat_motion.knob_z[i]*50, bat_motion.knob_y[i]*50, bat_motion.knob_x[i]*50);
                 const endPos = new THREE.Vector3(bat_motion.end_z[i]*50, bat_motion.end_y[i]*50, bat_motion.end_x[i]*50);
                 const knobToEnd = new THREE.Vector3().subVectors(endPos, knobPos).normalize();
@@ -386,6 +384,9 @@ class BaseballWorkspace extends React.Component {
           scene.add(this.baseball);
           this.baseball.scale.set(1, 1, 1);     // Adjust scale as necessary
           this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
+        }
+        else if (this.state.currentSportType =='demo'){
+          // only loads skeleton
         }
         
 

@@ -50,6 +50,8 @@ class Component extends React.Component {
         </div>
 
       </div> */}
+      {/* <input type="text" className="form-control" id="fps" value={this.state.fps} onChange={(e) => this.setState({ fps: e.target.value })} /> */}
+
       <BaseballWorkspace sportType={this.state.selectedLabel} fps={this.state.fps}/>
     </React.Fragment>
     );

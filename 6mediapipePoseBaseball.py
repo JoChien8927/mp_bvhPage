@@ -337,14 +337,15 @@ def process_file(keypoints_input,outputfile,fps):
             predictions_copy[frame][index][2] = res[name][0]*50
         
     print("Generating bvh...")
+    print("FRAME NUM:",predictions_copy.shape[0])
     write_mediapipe_bvh(outputfile, predictions_copy,fps)
 
 def main(args):
     ''' this will load the sample videos if no camera ID is given '''
     streams = []
     projections=[]
-    cam_parm_folder = "public/camera_parameters/{}".format(args["type"])
-    motion_folder = "public/motion/{}".format(args["type"])
+    cam_parm_folder = "public/exp/{}".format(args["type"])
+    motion_folder = "public/exp/{}".format(args["type"])
     for idx in [1,2,3,4]:
         # streams.append("public/motion/{}/cam{}.mp4".format(args["type"],idx))
         streams.append(f"{motion_folder}/cam{idx}.mp4")
