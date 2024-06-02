@@ -379,6 +379,10 @@ class BaseballWorkspace extends React.Component {
           this.baseballBat.scale.set(2.5, 2.5, 2.5);    
           this.baseballBat.rotation.set(0, 0, 90);
           scene.add(this.baseballBat); //sport switch
+          scene.add(this.baseball);
+          //for showing both baseball and bat
+          // this.baseball.scale.set(1, 1, 1);     // Adjust scale as necessary
+          // this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
         }
         else if (this.state.currentSportType == 'pitching') {
           scene.add(this.baseball);
