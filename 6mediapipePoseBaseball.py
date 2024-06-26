@@ -287,9 +287,17 @@ def run_mp(input_stream1, input_stream2, input_stream3, input_stream4, P0, P1, P
     for cap in caps:
         cap.release()
     
+    # to smooth the motion data
+    print("=Smoothing the motion data...")
+    kpts_3d = np.array(kpts_3d)
+    ws = 7
+    print("smooth with window size" , ws, " in moving average")
+    # Apply smoothing to the 3D keypoints
+    kpts_3d_smoothed = moving_average_smoothing(kpts_3d, window_size=ws)
+
     # show last keypoints in 3d 
     # print("mp last 3d keypoints: ", kpts_3d[-1])
-    return np.array(kpts_cam0), np.array(kpts_cam1), np.array(kpts_cam2), np.array(kpts_cam3), np.array(kpts_3d)
+    return np.array(kpts_cam0), np.array(kpts_cam1), np.array(kpts_cam2), np.array(kpts_cam3), kpts_3d_smoothed
 
 def get_center(a, b):
     """Calculates pose center as point between hips."""
@@ -340,8 +348,30 @@ def process_file(keypoints_input,outputfile,fps):
     print("FRAME NUM:",predictions_copy.shape[0])
     write_mediapipe_bvh(outputfile, predictions_copy,fps)
 
+# smooth the motion data
+def moving_average_smoothing(data, window_size=5):
+    """
+    Apply moving average smoothing to the input data.
+
+    Parameters:
+    data (numpy array): Input data of shape (num_frames, num_keypoints, 3)
+    window_size (int): The size of the moving window for averaging
+
+    Returns:
+    numpy array: Smoothed data
+    """
+    smoothed_data = np.copy(data)
+    num_frames, num_keypoints, _ = data.shape
+    
+    for i in range(num_keypoints):
+        for j in range(3):  # x, y, z coordinates
+            smoothed_data[:, i, j] = np.convolve(data[:, i, j], np.ones(window_size)/window_size, mode='same')
+    
+    return smoothed_data
+
 def main(args):
     ''' this will load the sample videos if no camera ID is given '''
+    print("=Running mediapipe pose estimation...")
     streams = []
     projections=[]
     cam_parm_folder = "public/exp/{}".format(args["type"])
