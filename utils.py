@@ -1,14 +1,37 @@
 import cv2
 import os
 import numpy as np
+import math
 
-
+from scipy import linalg
 def _make_homogeneous_rep_matrix(R, t):
     P = np.zeros((4,4))
     P[:3,:3] = R
     P[:3, 3] = t.reshape(3)
     P[3,3] = 1
     return P
+
+def rDLT(projections, points):
+    ''' Solve AX=0 using dynamic numbers of projections and points '''
+    A = []
+    for proj, pt in zip(projections, points):
+        A.append(pt[1] * proj[2, :] - proj[1, :])
+        A.append(proj[0, :] - pt[0] * proj[2, :])
+    
+    A = np.array(A)
+    # Ensure matrix has enough equations for SVD
+    if A.shape[0] < 8:
+        padding = np.zeros((8 - A.shape[0], A.shape[1]))
+        A = np.vstack([A, padding])
+
+    B = A.T @ A
+    U, s, Vh = linalg.svd(B, full_matrices=False)
+
+    # Extract the last row of V (smallest singular value)
+    result_point = Vh[-1, :3] / Vh[-1, 3]
+    result_point[1] *= -1  # Adjust y-coordinate as needed
+
+    return result_point
 
 #direct linear transform
 def DLT(P1, P2, P3, P4, point1, point2, point3, point4):
@@ -32,7 +55,7 @@ def DLT(P1, P2, P3, P4, point1, point2, point3, point4):
     
 
     B = A.transpose() @ A
-    from scipy import linalg
+    # from scipy import linalg
     U, s, Vh = linalg.svd(B, full_matrices = False)
 
     # print('Triangulated point: ')
@@ -117,6 +140,28 @@ def write_keypoints_to_disk(filename, kpts):
 
         fout.write('\n')
     fout.close()
+
+def dynamic_frame_concatenate(frames, h, w):
+    # Determine grid size (number of rows and columns)
+    num_frames = len(frames)
+    num_cols = math.ceil(math.sqrt(num_frames))
+    num_rows = math.ceil(num_frames / num_cols)
+
+    # Resize each frame to desired dimensions
+    resized_frames = [cv2.resize(frame, (w, h), interpolation=cv2.INTER_AREA) for frame in frames]
+
+    # Create an empty background image
+    background_height = h * num_rows
+    background_width = w * num_cols
+    background = np.zeros((background_height, background_width, 3), dtype=resized_frames[0].dtype)
+
+    # Place each frame in the background image
+    for idx, frame in enumerate(resized_frames):
+        row = idx // num_cols
+        col = idx % num_cols
+        background[row*h:(row+1)*h, col*w:(col+1)*w] = frame
+
+    return background
 
 def frameConcatenate(f1, f2, f3, f4, h, w):
     dim = (w, h)
