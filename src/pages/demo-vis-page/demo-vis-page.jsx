@@ -13,7 +13,7 @@ class Component extends React.Component {
 
     this.state = {
       sportType: 0,
-      selectedLabel: "demo",  // Default label
+      selectedLabel: "pj",  // Default label
       fps : 60,
     };
 

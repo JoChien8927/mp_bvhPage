@@ -50,10 +50,10 @@ class BaseballWorkspace extends React.Component {
         currentSportType: this.props.sportType, // Initialize currentSportType from props
         motion_fps : this.props.fps,
         skeleton_path: process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/kpts_3d_"+this.props.sportType+".bvh",
-        videoFirst_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam1.MP4",
-        videoSecond_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam2.MP4",
-        videoThird_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam3.MP4",
-        videoFourth_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam4.MP4",
+        videoFirst_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam1.mp4",
+        videoSecond_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam2.mp4",
+        videoThird_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam3.mp4",
+        videoFourth_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam4.mp4",
         bat_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/bat_motion.json",
         baseball_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/baseball_motion.json",
 
@@ -76,10 +76,10 @@ class BaseballWorkspace extends React.Component {
     this.setState({
       currentSportType: this.props.sportType,
       skeleton_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/kpts_3d_${this.props.sportType}.bvh`,
-      videoFirst_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam1.MP4`,
-      videoSecond_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam2.MP4`,
-      videoThird_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam3.MP4`,
-      videoFourth_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam4.MP4`,
+      videoFirst_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam1.mp4`,
+      videoSecond_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam2.mp4`,
+      videoThird_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam3.mp4`,
+      videoFourth_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam4.mp4`,
     });
     if (this.state.currentSportType === 'pitching' ) {
       this.setState({
@@ -90,11 +90,16 @@ class BaseballWorkspace extends React.Component {
     });
     }else if (this.state.currentSportType === 'batting') {
       this.setState({
+      currentSportType: this.props.sportType,
+      motion_fps: fps,
       bat_motion: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/bat_motion.json`,
       baseball_motion: `${process.env.PUBLIC_URL}/exp/empty/baseball_motion.json`,
+    });}
+        else {
+      this.setState({
+      currentSportType: this.props.sportType,
+      motion_fps: fps,
     });
-    
-
     }
     
   }
