@@ -11,6 +11,10 @@
 # production
 /build
 
+# data 
+/public/exp 
+# which is the folder where the images are stored
+
 # misc
 .DS_Store
 .env.local
@@ -25,3 +29,5 @@ yarn-error.log*
 .idea/
 
 .env
+
+
