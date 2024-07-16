@@ -50,12 +50,8 @@ class BaseballWorkspace extends React.Component {
         currentSportType: this.props.sportType, // Initialize currentSportType from props
         motion_fps : this.props.fps,
         skeleton_path: process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/kpts_3d_"+this.props.sportType+".bvh",
-        videoFirst_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam1.mp4",
-        videoSecond_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam2.mp4",
-        videoThird_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam3.mp4",
-        videoFourth_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam4.mp4",
-        bat_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/bat_motion.json",
-        baseball_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/baseball_motion.json",
+        bat_motion : process.env.PUBLIC_URL+"/exp/"+"demo"+"/bat_motion.json",
+        baseball_motion : process.env.PUBLIC_URL+"/exp/"+"demo"+"/baseball_motion.json",
 
       };
 
@@ -76,10 +72,7 @@ class BaseballWorkspace extends React.Component {
     this.setState({
       currentSportType: this.props.sportType,
       skeleton_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/kpts_3d_${this.props.sportType}.bvh`,
-      videoFirst_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam1.mp4`,
-      videoSecond_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam2.mp4`,
-      videoThird_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam3.mp4`,
-      videoFourth_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam4.mp4`,
+
     });
     if (this.state.currentSportType === 'pitching' ) {
       this.setState({
@@ -94,11 +87,19 @@ class BaseballWorkspace extends React.Component {
       motion_fps: fps,
       bat_motion: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/bat_motion.json`,
       baseball_motion: `${process.env.PUBLIC_URL}/exp/empty/baseball_motion.json`,
+    });}else if (this.state.currentSportType === 'demo') {
+      this.setState({
+      currentSportType: this.props.sportType,
+      motion_fps: fps,
+      bat_motion: `${process.env.PUBLIC_URL}/exp/demo/bat_motion.json`,
+      baseball_motion: `${process.env.PUBLIC_URL}/exp/demo/baseball_motion.json`,
     });}
         else {
       this.setState({
       currentSportType: this.props.sportType,
       motion_fps: fps,
+      bat_motion: `${process.env.PUBLIC_URL}/exp/empty/bat_motion.json`,
+      baseball_motion: `${process.env.PUBLIC_URL}/exp/demo/baseball_motion.json`,
     });
     }
     
@@ -120,18 +121,21 @@ class BaseballWorkspace extends React.Component {
 
 
       const loadpose = new Promise((resolve, reject) => {
-        fetch(this.state.skeleton_path)
-        .then(response =>{
-            bvhloader.load(this.state.skeleton_path, result => {
-                console.log("BVH Data:", result);
-                resolve({ result });
-            });
-        })
-        .catch(error => {
-            console.error("Error loading BVH data:", error);
-            reject(error);
+    fetch(this.state.skeleton_path)
+    .then(response => {
+        bvhloader.load(this.state.skeleton_path, result => {
+            console.log("BVH Data:", result);
+            const clip = result.clip;
+            const duration = clip.duration; // 动画的总时长（以秒为单位）
+            console.log('BVH animation duration:', duration);
+            resolve({ result, duration });
         });
-      });
+    })
+    .catch(error => {
+        console.error("Error loading BVH data:", error);
+        reject(error);
+    });
+});
 
 
       const loadbat = new Promise((resolve, reject) => {
@@ -160,32 +164,33 @@ class BaseballWorkspace extends React.Component {
           ballloader.load(basebaseball_model, resolve);
 
       });
-
-      const loadvideo = new Promise((resolve, reject) => {
-        this.videoFirst.addEventListener('loadeddata', resolve);
-        this.videoSecond.addEventListener('loadeddata', resolve);
-        this.videoThird.addEventListener('loadeddata', resolve);
-        this.videoFourth.addEventListener('loadeddata', resolve);
-      });
       const loadBallMotion = new Promise((resolve, reject) => {
           try {
               const times = [];
               const positionValues = [];
               // load baseball motion (.json) file
               const myPromise = new Promise((resolve, reject) => {
+                console.log("baseball_motion path:",this.state.baseball_motion);
                 fetch(this.state.baseball_motion)
                     .then(response => response.json())
                     .then(data => resolve(data))
                     .catch(error => reject(error));
             });
+            // show  ball motion path
+
 
             myPromise.then((baseball_motion) => {
               console.log("baseball_motion:",baseball_motion);
               const numFrames = baseball_motion.x.length;
-              console.log("ball :",this.state.motion_fps);
+              console.log("ball numFrames:",numFrames);
+              console.log("ball fps :",this.state.motion_fps);
               
               for (let i = 0; i < numFrames; i++) {
                   times.push(i * 1 / this.state.motion_fps); 
+                  // if not detected (-1) set valueto -1000
+                  if (baseball_motion.x[i] == -1 & baseball_motion.y[i] == -1 & baseball_motion.z[i] == -1) {
+                    baseball_motion.x[i] ,baseball_motion.y[i] ,baseball_motion.z[i] = -1000;
+                  }
                   positionValues.push(
                       baseball_motion.z[i]*50, 
                       baseball_motion.y[i]*50, 
@@ -207,6 +212,7 @@ class BaseballWorkspace extends React.Component {
             const knobPositions = [];
             const rotations = [];
             const myPromise = new Promise((resolve, reject) => {
+              console.log("bat_motion path:",this.state.bat_motion);
                 fetch(this.state.bat_motion)
                     .then(response => response.json())
                     .then(data => resolve(data))
@@ -216,13 +222,18 @@ class BaseballWorkspace extends React.Component {
             myPromise.then((bat_motion) => {
               console.log("bat_motion:",bat_motion);
               const numFrames = bat_motion.end_x.length;
+              console.log("bat numFrames:",numFrames);
+              console.log("bat fps :",this.state.motion_fps);
 
             for (let i = 0; i < numFrames; i++) {
                 times.push(i / this.state.motion_fps); 
                 const knobPos = new THREE.Vector3(bat_motion.knob_z[i]*50, bat_motion.knob_y[i]*50, bat_motion.knob_x[i]*50);
                 const endPos = new THREE.Vector3(bat_motion.end_z[i]*50, bat_motion.end_y[i]*50, bat_motion.end_x[i]*50);
                 const knobToEnd = new THREE.Vector3().subVectors(endPos, knobPos).normalize();
-
+                 // if not detected (-1) set valueto -1000
+                if (bat_motion.knob_x[i] == -1 & bat_motion.knob_y[i] == -1 & bat_motion.knob_z[i] == -1) {
+                  bat_motion.knob_x[i] ,bat_motion.knob_y[i] ,bat_motion.knob_z[i] = -1000;
+                }
                 knobPositions.push(
                     bat_motion.knob_z[i]*50,
                     bat_motion.knob_y[i]*50,
@@ -266,22 +277,24 @@ class BaseballWorkspace extends React.Component {
 
           scene = new THREE.Scene();
 
-          scene.add( new THREE.GridHelper( 200, 10 ) );
+          scene.add( new THREE.GridHelper( 2000, 100 ) );
           //lower the grid line's alpha 
-          scene.children[0].material.opacity = 0.2;
+          scene.children[0].material.opacity = 0.5;
           scene.children[0].material.transparent = true;
+          //adjust grid's y position
+          scene.children[0].position.y = -99;
           //add a grass texture as the ground at exact position of grid
           var texture = new THREE.TextureLoader().load( grass_texture );
           texture.wrapS = THREE.RepeatWrapping;
           texture.wrapT = THREE.RepeatWrapping;
           texture.repeat.set( 5, 5 );
-          var plane = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshLambertMaterial({map: texture}));
+          var plane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshLambertMaterial({map: texture}));
           plane.rotation.x = -Math.PI / 2;
-          plane.position.y = -0.5;
+          plane.position.y = -100;
           scene.add(plane);
-          //  show x yz axis in the scene
+          //  show xyz axis in the scene
           var axesHelper = new THREE.AxesHelper( 100 );
-          scene.add( axesHelper );
+          // scene.add( axesHelper );
           // hemi light
           hemiLight = new THREE.AmbientLight(0x636363, 2);
           hemiLight.position.set(0, 200, 0);
@@ -321,11 +334,6 @@ class BaseballWorkspace extends React.Component {
             // console.log("Bat Position:", this.baseballBat.position);
 
             this.setState({playbackCurFrame: [0,mixer.time,max]});
-            this.videoFirst.play();
-            this.videoSecond.play();
-            this.videoThird.play();
-            this.videoFourth.play();
-
 
             this.setState({frameNum: this.state.frameNum+3});
           }
@@ -339,16 +347,6 @@ class BaseballWorkspace extends React.Component {
             ballmixer.time = 0;
             batmixer.time = 0;  
             mixer.time = 0;
-            this.videoFirst.currentTime = 0;
-            this.videoSecond.currentTime = 0;
-            this.videoThird.currentTime = 0;
-            this.videoFourth.currentTime = 0;
-
-            this.videoFirst.pause();
-            this.videoSecond.pause();
-            this.videoThird.pause();
-            this.videoFourth.pause();
-            
           }
 
           renderer.render( scene, camera );
@@ -357,17 +355,24 @@ class BaseballWorkspace extends React.Component {
       }      
 
       
-        Promise.all([loadpose, loadvideo,loadbat,loadbaseball,loadBallMotion,loadBatMotion]).then((result)=>{
+        Promise.all([loadpose,loadbat,loadbaseball,loadBallMotion,loadBatMotion]).then((result)=>{
         var pose=result[0];
-        console.log("pose:",pose);
-        var video=result[1];
-        var batModel=result[2];
-        var baseballModel=result[3];
-        var baseballClip = result[4]; // This is the AnimationClip we created above
-        var batClip = result[5];
+        // console.log("pose:",pose);
+        var batModel=result[1];
+        var baseballModel=result[2];
+        var baseballClip = result[3]; // This is the AnimationClip we created above
+        var batClip = result[4];
+
         // console.log(result);
+        //add 
+        // 定义一个标准材质，启用深度测试
+        const boneMaterial = new THREE.MeshStandardMaterial({ color: 0x28FF28, depthTest: true });
+
         skeletonHelper = new THREE.SkeletonHelper( pose.result.skeleton.bones[ 0 ] );
         skeletonHelper.skeleton = pose.result.skeleton; // allow animation mixer to bind to SkeletonHelper directly
+
+        //apply the bone material to the skeleton helper
+        skeletonHelper.material = boneMaterial;
 
         var boneContainer = new THREE.Group();
         boneContainer.add( pose.result.skeleton.bones[ 0 ] );
@@ -395,7 +400,16 @@ class BaseballWorkspace extends React.Component {
           this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
         }
         else if (this.state.currentSportType =='demo'){
-          // only loads skeleton
+          //skeleton loaded
+          //load baseball 
+          scene.add(this.baseball);
+          this.baseball.scale.set(1, 1, 1);     // Adjust scale as necessary
+          this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
+          //load baseball bat
+          this.baseballBat.scale.set(2, 2.5, 2);    
+          this.baseballBat.rotation.set(0, 0, 90);
+          scene.add(this.baseballBat); //sport switch
+          scene.add(this.baseball);
         }
         
 
@@ -423,13 +437,9 @@ class BaseballWorkspace extends React.Component {
           playbackMaxValue: mixer._actions[0]._clip.duration,
         });
         this.animationMixer = mixer
-        this.videoFirst.currentTime = 0;
-        this.videoSecond.currentTime = 0;
-        this.videoThird.currentTime = 0;
-        this.videoFourth.currentTime = 0;
 
         console.log("mixer action duration:",mixer._actions[0]._clip.duration);
-        console.log("1st Video duration:",this.videoFirst.duration)
+
       })
       
    
@@ -459,22 +469,12 @@ class BaseballWorkspace extends React.Component {
             updateFramPosFromSlider={this.updateFramPosFromSlider.bind(this)}
           />
 				</div>
+        
         <div display="flex">
           
-          <video width="25%" height="240" muted={false} ref={player=>(this.videoFirst=player)}>
-            <source src={this.state.videoFirst_path} />
-          </video>
-          <video width="25%" height="240" muted={false} ref={player=>(this.videoSecond=player)}>
-            <source src={this.state.videoSecond_path} />
-          </video>
-          <video width="25%" height="240" muted={false} ref={player=>(this.videoThird=player)}>
-            <source src={this.state.videoThird_path} />
-          </video>
-          <video width="25%" height="240" muted={false} ref={player=>(this.videoFourth=player)}>
-            <source src={this.state.videoFourth_path} />
-          </video>
           
         </div>
+        
       </React.Fragment>;
     }
 
@@ -495,13 +495,6 @@ class BaseballWorkspace extends React.Component {
           currentFrame[1] = 0;
     
           this.updateFramePos(currentFrame);
-        }
-
-        if (!playbackIsPlay) {
-          this.videoFirst.pause();
-          this.videoSecond.pause();
-          this.videoThird.pause();
-          this.videoFourth.pause();
         }
     
         ActionRecordingActions.StorePlayerPlayPause(playbackIsPlay);
@@ -531,10 +524,6 @@ class BaseballWorkspace extends React.Component {
 			this.animationMixer.setTime(frame[1]);
       this.baseballMixer.setTime(frame[1]);
       this.batMixer.setTime(frame[1]);
-      this.videoFirst.currentTime = frame[1]*this.videoFirst.playbackRate;
-      this.videoSecond.currentTime = frame[1]*this.videoSecond.playbackRate;
-      this.videoThird.currentTime = frame[1]*this.videoThird.playbackRate;
-      this.videoFourth.currentTime = frame[1]*this.videoFourth.playbackRate;
 	
 			ActionRecordingActions.StorePlayerUpdateFrame(frame);
 		}

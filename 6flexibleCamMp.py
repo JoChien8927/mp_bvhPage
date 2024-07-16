@@ -360,7 +360,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
 
     ap.add_argument("-type", "--type", type=str, required=False,
-	                help="sports type",default="pj")
+	                help="sports type",default="demo")
 
     args = vars(ap.parse_args())
     main(args)

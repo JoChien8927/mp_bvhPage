@@ -14,35 +14,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 //models
 import bat_model from "../../assets/model/baseballbat.gltf";
-import basebaseball_model from "../../assets/model/baseball/baseball.gltf";
-import bat_motion from "../../assets/motion/empty_bat_motion.json";
+import basebaseball_model from "../../assets/model/baseball/gr_baseball.gltf";
 import grass_texture from "../../assets/texture/ograss_tex.jpg";
-import baseball_motion from "../../assets/motion/pitching/baseball_motion.json";
-
-// var motion_fps = 120;
-// import SKELETON from "../../assets/motion/pitching/kpts_3d_pitching.bvh";
-// import video1 from "../../assets/motion/pitching/cam1.MP4";
-// import video2 from "../../assets/motion/pitching/cam2.MP4";
-// import video3 from "../../assets/motion/pitching/cam3.MP4";
-// import video4 from "../../assets/motion/pitching/cam4.MP4";
-// import baseball_motion from "../../assets/motion/pitching/baseball_motion_pitching.json";
-
-var motion_fps = 30;
-import SKELETON from "../../assets/motion/batting/kpts_3d_batting.bvh";
-import video1 from "../../assets/motion/batting/cam1.mp4";
-import video2 from "../../assets/motion/batting/cam2.mp4";
-import video3 from "../../assets/motion/batting/cam3.mp4";
-import video4 from "../../assets/motion/batting/cam4.mp4";
-// import baseball_motion from "../../assets/motion/batting/baseball_motion_batting.json";
-// import bat_motion from "../../assets/motion/batting/bat_motion.json";
-
-// var motion_fps = 60;
-// import SKELETON from "../../assets/motion/demo/kpts_3d_demo.bvh";
-// import video1 from "../../assets/motion/demo/cam1.MP4";
-// import video2 from "../../assets/motion/demo/cam2.MP4";
-// import video3 from "../../assets/motion/demo/cam3.MP4";
-// import video4 from "../../assets/motion/demo/cam4.MP4";
-// import baseball_motion from "../../assets/motion/demo/baseball_motion_demo.json";
 
 
 
@@ -52,7 +25,6 @@ import video4 from "../../assets/motion/batting/cam4.mp4";
 class BaseballWorkspace extends React.Component {
     constructor(props) {
       super(props);
-      
       this.containerRef = React.createRef();
 			
 			this.animationMixer = null;
@@ -75,22 +47,64 @@ class BaseballWorkspace extends React.Component {
           neutral: 0,
           bad: 0,
         },
+        currentSportType: this.props.sportType, // Initialize currentSportType from props
+        motion_fps : this.props.fps,
+        skeleton_path: process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/kpts_3d_"+this.props.sportType+".bvh",
+        videoFirst_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam1.mp4",
+        videoSecond_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam2.mp4",
+        videoThird_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam3.mp4",
+        videoFourth_path : process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/cam4.mp4",
+        bat_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/bat_motion.json",
+        baseball_motion : process.env.PUBLIC_URL+"/exp/"+"empty"+"/baseball_motion.json",
+
       };
 
       this.baseball = null;
       this.baseballBat = null;
-      this.bbb =null;
 
-      // this.ballTracePositions = [];
-      // this.batEndTracePositions = [];
+    }
+
+    
+    
+    componentDidUpdate(prevProps) {
+      // 檢查 sportType 或 fps 是否有變化
+      if (prevProps.sportType !== this.props.sportType || prevProps.fps !== this.props.fps) {
+        this.updateInternalState(this.props.sportType, this.props.fps);
+      }
+    }
+    updateInternalState = (sportType, fps) => {
+    this.setState({
+      currentSportType: this.props.sportType,
+      skeleton_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/kpts_3d_${this.props.sportType}.bvh`,
+      videoFirst_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam1.mp4`,
+      videoSecond_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam2.mp4`,
+      videoThird_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam3.mp4`,
+      videoFourth_path: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/cam4.mp4`,
+    });
+    if (this.state.currentSportType === 'pitching' ) {
+      this.setState({
+      currentSportType: this.props.sportType,
+      motion_fps: fps,
+      bat_motion: `${process.env.PUBLIC_URL}/exp/empty/bat_motion.json`,
+      baseball_motion: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/baseball_motion.json`,
+    });
+    }else if (this.state.currentSportType === 'batting') {
+      this.setState({
+      currentSportType: this.props.sportType,
+      motion_fps: fps,
+      bat_motion: `${process.env.PUBLIC_URL}/exp/${this.props.sportType}/bat_motion.json`,
+      baseball_motion: `${process.env.PUBLIC_URL}/exp/empty/baseball_motion.json`,
+    });}
+        else {
+      this.setState({
+      currentSportType: this.props.sportType,
+      motion_fps: fps,
+    });
     }
     
-
-
-
-
+  }
     componentDidMount=()=>{
-    
+       console.log("Component mounted with sportType:", this.state.currentSportType);
       var clock = new THREE.Clock();
 
       var camera, controls, scene, renderer, hemiLight;
@@ -102,14 +116,24 @@ class BaseballWorkspace extends React.Component {
       var virtualbat_length = 0;      
       const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });  
       const blueMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });  
+      const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
 
+      const loadpose = new Promise((resolve, reject) => {
+        fetch(this.state.skeleton_path)
+        .then(response =>{
+            bvhloader.load(this.state.skeleton_path, result => {
+                console.log("BVH Data:", result);
+                resolve({ result });
+            });
+        })
+        .catch(error => {
+            console.error("Error loading BVH data:", error);
+            reject(error);
+        });
+      });
 
-      const loadpose =  new Promise((resolve, reject) => {
-          // bvhloader.load( "/api/bvh/"+this.props.calibration_id +"/"+this.props.recording_id, resolve);		
-          bvhloader.load(SKELETON,resolve);
-          console.log("bvh skeleton loaded!",bvhloader.load(SKELETON, resolve));
-      } );
+
       const loadbat = new Promise((resolve, reject) => {
         batloader.load(bat_model, model => {
             this.baseballBat = model.scene;
@@ -136,6 +160,7 @@ class BaseballWorkspace extends React.Component {
           ballloader.load(basebaseball_model, resolve);
 
       });
+
       const loadvideo = new Promise((resolve, reject) => {
         this.videoFirst.addEventListener('loadeddata', resolve);
         this.videoSecond.addEventListener('loadeddata', resolve);
@@ -146,10 +171,21 @@ class BaseballWorkspace extends React.Component {
           try {
               const times = [];
               const positionValues = [];
+              // load baseball motion (.json) file
+              const myPromise = new Promise((resolve, reject) => {
+                fetch(this.state.baseball_motion)
+                    .then(response => response.json())
+                    .then(data => resolve(data))
+                    .catch(error => reject(error));
+            });
+
+            myPromise.then((baseball_motion) => {
+              console.log("baseball_motion:",baseball_motion);
               const numFrames = baseball_motion.x.length;
+              console.log("ball :",this.state.motion_fps);
               
               for (let i = 0; i < numFrames; i++) {
-                  times.push(i * 1 / motion_fps); 
+                  times.push(i * 1 / this.state.motion_fps); 
                   positionValues.push(
                       baseball_motion.z[i]*50, 
                       baseball_motion.y[i]*50, 
@@ -158,7 +194,8 @@ class BaseballWorkspace extends React.Component {
                 
               }
               const positionKF = new THREE.VectorKeyframeTrack('.position', times, positionValues);
-              resolve(new THREE.AnimationClip('BaseballMovement', -1, [positionKF]));
+              resolve(new THREE.AnimationClip('BaseballMovement', -1, [positionKF]));});    
+              
           } catch (error) {
               console.error("Failed to process ball Motion:", error);
               reject(error);
@@ -169,11 +206,19 @@ class BaseballWorkspace extends React.Component {
             const times = [];
             const knobPositions = [];
             const rotations = [];
-            const numFrames = bat_motion.end_x.length;
+            const myPromise = new Promise((resolve, reject) => {
+                fetch(this.state.bat_motion)
+                    .then(response => response.json())
+                    .then(data => resolve(data))
+                    .catch(error => reject(error));
+            });
+              
+            myPromise.then((bat_motion) => {
+              console.log("bat_motion:",bat_motion);
+              const numFrames = bat_motion.end_x.length;
 
             for (let i = 0; i < numFrames; i++) {
-                times.push(i / motion_fps); 
-
+                times.push(i / this.state.motion_fps); 
                 const knobPos = new THREE.Vector3(bat_motion.knob_z[i]*50, bat_motion.knob_y[i]*50, bat_motion.knob_x[i]*50);
                 const endPos = new THREE.Vector3(bat_motion.end_z[i]*50, bat_motion.end_y[i]*50, bat_motion.end_x[i]*50);
                 const knobToEnd = new THREE.Vector3().subVectors(endPos, knobPos).normalize();
@@ -183,14 +228,6 @@ class BaseballWorkspace extends React.Component {
                     bat_motion.knob_y[i]*50,
                     bat_motion.knob_x[i]*50
                 );
-                //get the end vector of knob -> end
-
-
-                // endPositions.push(
-                //     bat_motion.knob_z[i]*50 + knobToEnd.z * virtualbat_length,
-                //     bat_motion.knob_y[i]*50 + knobToEnd.y * virtualbat_length,
-                //     bat_motion.knob_x[i]*50 + knobToEnd.x * virtualbat_length
-                // );
 
                 // 计算需要旋转的轴和角度
                 const axis = new THREE.Vector3(1,0, 0); // 假设初始方向为y轴
@@ -207,6 +244,9 @@ class BaseballWorkspace extends React.Component {
             const knobKF = new THREE.VectorKeyframeTrack(".knob.position", times, knobPositions);
             const batClip = new THREE.AnimationClip('BatMovement', -1, [rotationKF, knobKF]);
             resolve(batClip);
+            })
+              
+            
         } catch (error) {
             console.error("Failed to process bat motion:", error);
             reject(error);
@@ -219,6 +259,8 @@ class BaseballWorkspace extends React.Component {
           renderer.setSize(window.innerWidth, window.innerHeight);
       }
       const init=()=>{
+          console.log("process.env.PUBLIC_URL",process.env.PUBLIC_URL);
+          console.log("SKELTON:",this.state.skeleton_path);
           camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
           camera.position.set( 0, 50, 200 );
 
@@ -254,12 +296,6 @@ class BaseballWorkspace extends React.Component {
           controls.enable = false;
           // document.body.appendChild( renderer.domElement );
           document.getElementById("main").appendChild( renderer.domElement );
-          //trajectory
-          // this.ballTracePositions = [];
-          // this.batEndTracePositions = [];
-          // this.ballTraceLine.geometry.attributes.position.needsUpdate = true;
-          // this.batEndTraceLine.geometry.attributes.position.needsUpdate = true;
-
           
           window.addEventListener( 'resize', onWindowResize, false );
           controls = new OrbitControls( camera, renderer.domElement );
@@ -282,7 +318,7 @@ class BaseballWorkspace extends React.Component {
             //knob and end position
             // console.log("Bat knob Position:", this.baseballBat.knob.position);
             // console.log("Bat end Position:", this.baseballBat.end.position);
-            console.log("Bat Position:", this.baseballBat.position);
+            // console.log("Bat Position:", this.baseballBat.position);
 
             this.setState({playbackCurFrame: [0,mixer.time,max]});
             this.videoFirst.play();
@@ -314,83 +350,74 @@ class BaseballWorkspace extends React.Component {
             this.videoFourth.pause();
             
           }
-          // if (this.baseball && this.baseballBat) {
-          //   const ballPos = new THREE.Vector3().setFromMatrixPosition(this.baseball.matrixWorld);
-          //   const batEndPos = new THREE.Vector3().setFromMatrixPosition(this.baseballBat.end.matrixWorld);
 
-          //   this.ballTracePositions.push(ballPos.x, ballPos.y, ballPos.z);
-          //   this.batEndTracePositions.push(batEndPos.x, batEndPos.y, batEndPos.z);
-
-          //   this.ballTraceLine.geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.ballTracePositions, 3));
-          //   this.ballTraceLine.geometry.attributes.position.needsUpdate = true;
-
-          //   this.batEndTraceLine.geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.batEndTracePositions, 3));
-          //   this.batEndTraceLine.geometry.attributes.position.needsUpdate = true;
-          // }
-
-         
           renderer.render( scene, camera );
           controls.update();
           
       }      
-      Promise.all([loadpose, loadvideo,loadbat,loadbaseball,loadBallMotion,loadBatMotion]).then((result)=>{
+
+      
+        Promise.all([loadpose, loadvideo,loadbat,loadbaseball,loadBallMotion,loadBatMotion]).then((result)=>{
         var pose=result[0];
+        console.log("pose:",pose);
         var video=result[1];
         var batModel=result[2];
         var baseballModel=result[3];
         var baseballClip = result[4]; // This is the AnimationClip we created above
         var batClip = result[5];
         // console.log(result);
-        skeletonHelper = new THREE.SkeletonHelper( pose.skeleton.bones[ 0 ] );
-        skeletonHelper.skeleton = pose.skeleton; // allow animation mixer to bind to SkeletonHelper directly
+        skeletonHelper = new THREE.SkeletonHelper( pose.result.skeleton.bones[ 0 ] );
+        skeletonHelper.skeleton = pose.result.skeleton; // allow animation mixer to bind to SkeletonHelper directly
 
         var boneContainer = new THREE.Group();
-        boneContainer.add( pose.skeleton.bones[ 0 ] );
+        boneContainer.add( pose.result.skeleton.bones[ 0 ] );
 
         scene.add( skeletonHelper );
         scene.add( boneContainer );
         
-        // Handling the baseball bat
+        
         this.baseballBat = batModel.scene;  
-        scene.add(this.baseballBat); //sport switch￼
-        this.baseballBat.scale.set(3, 3, 3);    
-        this.baseballBat.rotation.set(0, 0, 90);
-        batmixer = new THREE.AnimationMixer(this.baseballBat);
-        // bbb use the same model as baseball bat but not controled by mixer
-
-
-        // this.bbb = this.baseballBat.clone();
-        // scene.add(this.bbb);
-
-        const batAction = batmixer.clipAction(batClip); 
-        batAction.play();
-        console.log("Bat mixer time:", batmixer.time);
+        this.baseball = baseballModel.scene;
+        
+        if (this.state.currentSportType == 'batting') {
+          // Handling the baseball bat
+          this.baseballBat.scale.set(2.5, 2.5, 2.5);    
+          this.baseballBat.rotation.set(0, 0, 90);
+          scene.add(this.baseballBat); //sport switch
+          scene.add(this.baseball);
+          //for showing both baseball and bat
+          // this.baseball.scale.set(1, 1, 1);     // Adjust scale as necessary
+          // this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
+        }
+        else if (this.state.currentSportType == 'pitching') {
+          scene.add(this.baseball);
+          this.baseball.scale.set(1, 1, 1);     // Adjust scale as necessary
+          this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
+        }
+        else if (this.state.currentSportType =='demo'){
+          // only loads skeleton
+        }
         
 
         // Handling the baseball
-        this.baseball = baseballModel.scene;
-        scene.add(this.baseball);
-        this.baseball.scale.set(1, 1, 1);     // Adjust scale as necessary
-        this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
-        //load baseball position and play animation
+        
+        //load  position and play animation
+        batmixer = new THREE.AnimationMixer(this.baseballBat);
         ballmixer = new THREE.AnimationMixer(this.baseball);
         const action = ballmixer.clipAction(baseballClip);
+        const batAction = batmixer.clipAction(batClip); 
         action.play();
-        console.log("Ball mixer time:", ballmixer.time);
+        batAction.play();
 
+        console.log("Ball mixer time:", ballmixer.time);
+        console.log("Bat mixer time:", batmixer.time);
         
         // console.log("Animation positions:", this.baseball.animation);
 
         // play animation
         mixer = new THREE.AnimationMixer( skeletonHelper );
-        mixer.clipAction( pose.clip ).setEffectiveWeight( 1.0 ).play();
+        mixer.clipAction( pose.result.clip ).setEffectiveWeight( 1.0 ).play();
 
-        var position = [];
-        for (var i = 0; i < 684; i++) {
-          position.push(i);
-        }
-
-        
         // console.log(this.baseball);
         this.setState({
           playbackMaxValue: mixer._actions[0]._clip.duration,
@@ -404,22 +431,17 @@ class BaseballWorkspace extends React.Component {
         console.log("mixer action duration:",mixer._actions[0]._clip.duration);
         console.log("1st Video duration:",this.videoFirst.duration)
       })
+      
+   
+      
 
       init();
-      //trajectory 
-      // const traceMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-      // const traceGeometry = new THREE.BufferGeometry();
-
-      // this.ballTraceLine = new THREE.Line(traceGeometry, traceMaterial);
-      // this.batEndTraceLine = new THREE.Line(traceGeometry.clone(), traceMaterial);
-
-      scene.add(this.ballTraceLine);
-      scene.add(this.batEndTraceLine);
       animate(); 
-      
+      this.updateInternalState(this.props.sportType, this.props.fps);
     }
     
     render() {
+      const { currentSportType } = this.state;
       return <React.Fragment>
         <div id="main" style={{marginLeft: "16%"}}></div>
         <div ref={this.containerRef}>
@@ -440,16 +462,16 @@ class BaseballWorkspace extends React.Component {
         <div display="flex">
           
           <video width="25%" height="240" muted={false} ref={player=>(this.videoFirst=player)}>
-            <source src={video1} />
+            <source src={this.state.videoFirst_path} />
           </video>
           <video width="25%" height="240" muted={false} ref={player=>(this.videoSecond=player)}>
-            <source src={video2} />
+            <source src={this.state.videoSecond_path} />
           </video>
           <video width="25%" height="240" muted={false} ref={player=>(this.videoThird=player)}>
-            <source src={video3} />
+            <source src={this.state.videoThird_path} />
           </video>
           <video width="25%" height="240" muted={false} ref={player=>(this.videoFourth=player)}>
-            <source src={video4} />
+            <source src={this.state.videoFourth_path} />
           </video>
           
         </div>
