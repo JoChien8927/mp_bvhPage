@@ -162,7 +162,6 @@ class BaseballWorkspace extends React.Component {
       });
       const loadbaseball = new Promise((resolve, reject) => {
           ballloader.load(basebaseball_model, resolve);
-
       });
       const loadBallMotion = new Promise((resolve, reject) => {
           try {
@@ -177,8 +176,6 @@ class BaseballWorkspace extends React.Component {
                     .catch(error => reject(error));
             });
             // show  ball motion path
-
-
             myPromise.then((baseball_motion) => {
               console.log("baseball_motion:",baseball_motion);
               const numFrames = baseball_motion.x.length;
@@ -270,6 +267,7 @@ class BaseballWorkspace extends React.Component {
           renderer.setSize(window.innerWidth, window.innerHeight);
       }
       const init=()=>{
+        const y_pos= 0;
           console.log("process.env.PUBLIC_URL",process.env.PUBLIC_URL);
           console.log("SKELTON:",this.state.skeleton_path);
           camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
@@ -282,7 +280,7 @@ class BaseballWorkspace extends React.Component {
           scene.children[0].material.opacity = 0.5;
           scene.children[0].material.transparent = true;
           //adjust grid's y position
-          scene.children[0].position.y = -99;
+          scene.children[0].position.y = y_pos+1;
           //add a grass texture as the ground at exact position of grid
           var texture = new THREE.TextureLoader().load( grass_texture );
           texture.wrapS = THREE.RepeatWrapping;
@@ -290,11 +288,12 @@ class BaseballWorkspace extends React.Component {
           texture.repeat.set( 5, 5 );
           var plane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshLambertMaterial({map: texture}));
           plane.rotation.x = -Math.PI / 2;
-          plane.position.y = -100;
-          scene.add(plane);
+          
+          plane.position.y = y_pos;
+          // scene.add(plane);
           //  show xyz axis in the scene
           var axesHelper = new THREE.AxesHelper( 100 );
-          // scene.add( axesHelper );
+          scene.add( axesHelper );
           // hemi light
           hemiLight = new THREE.AmbientLight(0x636363, 2);
           hemiLight.position.set(0, 200, 0);
@@ -406,10 +405,10 @@ class BaseballWorkspace extends React.Component {
           this.baseball.scale.set(1, 1, 1);     // Adjust scale as necessary
           this.baseball.position.set(0, 0, 0);  // Adjust position as necessary
           //load baseball bat
-          this.baseballBat.scale.set(2, 2.5, 2);    
-          this.baseballBat.rotation.set(0, 0, 90);
-          scene.add(this.baseballBat); //sport switch
-          scene.add(this.baseball);
+          // this.baseballBat.scale.set(2, 2.5, 2);    
+          // this.baseballBat.rotation.set(0, 0, 90);
+          // scene.add(this.baseballBat); //sport switch
+
         }
         
 

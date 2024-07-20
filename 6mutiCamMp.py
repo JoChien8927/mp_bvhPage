@@ -13,7 +13,7 @@ from pathlib import Path
 from multiprocessing.pool import ThreadPool
 import math
 from collections import deque
-from utils import read_keypoints, DLT, get_projection_matrix, write_keypoints_to_disk, frameConcatenate
+from myutils import read_keypoints, DLT, get_projection_matrix, write_keypoints_to_disk, frameConcatenate
 # from bodypose3d import run_mp
 import argparse
 
@@ -52,6 +52,41 @@ joint_list = [
     'LeftShoulder', 'LeftElbow', 'LeftWrist', 'LeftPinkyEndSite', 'LeftIndexEndSite', 'LeftThumbEndSite',
     'RightShoulder', 'RightElbow', 'RightWrist', 'RightPinkyEndSite', 'RightIndexEndSite', 'RightThumbEndSite'
 ]
+def reproject_3d_to_2d(kpts_3d, projections, h, w):
+    """
+    Reprojects 3D keypoints to 2D using the given projection matrices.
+
+    Parameters:
+    kpts_3d (numpy array): 3D keypoints of shape (num_frames, num_keypoints, 3)
+    projections (list): List of projection matrices for each camera
+    h (int): Height of the image
+    w (int): Width of the image
+
+    Returns:
+    numpy array: Reprojected 2D keypoints for each camera, shape (num_cameras, num_frames, num_keypoints, 2)
+    """
+    # print('image size (h,w):', (h, w))
+    num_frames, num_keypoints, _ = kpts_3d.shape
+    num_cameras = len(projections)
+    
+    kpts_2d = np.zeros((num_cameras, num_frames, num_keypoints, 2))
+    
+    for frame_idx in range(num_frames):
+        for kp_idx in range(num_keypoints):
+            point_3d = np.append(kpts_3d[frame_idx, kp_idx], 1)  # Convert to homogeneous coordinates
+            for cam_idx, proj_matrix in enumerate(projections):
+                projected_2d = proj_matrix @ point_3d  # Matrix multiplication
+                if projected_2d[2] != 0:  # Avoid division by zero
+                    projected_2d /= projected_2d[2]
+
+                x, y = projected_2d[0], projected_2d[1]
+                
+                # y= 0.5*h-y
+
+                kpts_2d[cam_idx, frame_idx, kp_idx] = [x, y]
+                # cv2.waitKey(0)  # For debugging purposes, wait for a key press to continue
+
+    return kpts_2d
 
 def run_mp(input_stream1, input_stream2, input_stream3, input_stream4, P0, P1, P2, P3):
 
@@ -261,14 +296,30 @@ def run_mp(input_stream1, input_stream2, input_stream3, input_stream4, P0, P1, P
             else:
                 _p3d = DLT(P0, P1, P2, P3, uv1, uv2, uv3, uv4) #calculate 3d position of keypoint
             frame_p3ds.append(_p3d)
-           
+        
         
         
         ''' Change shape to 33 '''
         frame_p3ds = np.array(frame_p3ds).reshape((33, 3))
         kpts_3d.append(frame_p3ds)
 
-        
+        # Reproject 3D keypoints to 2D for visualization
+        rp_kpts_2d = reproject_3d_to_2d(np.array(kpts_3d), projections,_h,_w)
+        for cam_idx in range(num_selected_cams):
+            frame_2d_kpts = rp_kpts_2d[cam_idx, -1]
+            # Draw keypoints
+            for kp_idx, (x, y) in enumerate(frame_2d_kpts):
+                if x != -1 and y != -1:
+                    cv2.circle(frame[cam_idx], (int(x), int(y)), 5, (0, 255, 0), -1)
+            
+            # Draw bones
+            for connection in mp_pose.POSE_CONNECTIONS:
+                start_idx, end_idx = connection
+                if frame_2d_kpts[start_idx][0] != -1 and frame_2d_kpts[start_idx][1] != -1 and frame_2d_kpts[end_idx][0] != -1 and frame_2d_kpts[end_idx][1] != -1:
+                    start_point = (int(frame_2d_kpts[start_idx][0]), int(frame_2d_kpts[start_idx][1]))
+                    end_point = (int(frame_2d_kpts[end_idx][0]), int(frame_2d_kpts[end_idx][1]))
+                    cv2.line(frame[cam_idx], start_point, end_point, (0, 255, 0), 2)
+
         # Visualize
         size = (2*w, 2*h)
         ConcatFrame = frameConcatenate(frame0, frame1, frame2, frame3, h, w)

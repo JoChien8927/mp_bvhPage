@@ -5,7 +5,7 @@ import argparse
 import os
 import glob
 from tqdm import tqdm
-from utils import read_keypoints, DLT, get_projection_matrix, write_keypoints_to_disk, frameConcatenate,rDLT,dynamic_frame_concatenate
+from myutils import read_keypoints, DLT, get_projection_matrix, write_keypoints_to_disk, frameConcatenate,rDLT,dynamic_frame_concatenate
 
 
 def multi_map_mp(streams,num_cams, bool_list, pureSkeletonVid_output_pth,mixVid_output_pth):
