@@ -1,3 +1,4 @@
+import json
 import cv2
 from PIL import Image
 from matplotlib.pylab import f
@@ -19,11 +20,91 @@ from tqdm import tqdm
 # from bodypose3d import run_mp
 import argparse
 
+# from helper.mediapipe_to_mixamo import mediapipe_to_mixamo, MediapipeManager,get_name_idx_map,get_mixamo_name_idx_map,get_mixamo_names
 
 
 # inputFile = sys.argv[1]  # outputs/inputvideo/batting.mp4
 # fileLocation = sys.argv[0] # "C:/Users/calvi/OneDrive/Documents/github/mocap-data/" + calibration_id + / +recording_id+_idx
 # outputFile = sys.argv[0]  # coach_pitching.bvh
+def get_name_idx_map(landmark_names):
+    name_idx_map = {}
+    for idx in range(0, len(landmark_names)):
+        name_idx_map[landmark_names[idx]] = idx
+    return name_idx_map
+
+
+# def get_mixamo_names():
+#     return [
+#         ['Hips', 0, -1],  # left hip <->right hip
+#         ['Spine', 1, 0],
+#         ['Spine1', 2, 1],
+#         ['Spine2', 3, 2],
+
+#         ['Neck', 4, 3],  # left_shoulder <-> right_shoulder
+#         ['Head', 5, 4],  # left_ear <-> right_ear
+
+#         ['LeftArm', 6, 3, "left_shoulder"],
+#         ['LeftForeArm', 7, 6, "left_elbow"],
+#         ['LeftHand', 8, 7, "left_wrist"],
+#         ['LeftHandThumb1', 9, 8, "left_thumb"],
+#         ['LeftHandIndex1', 10, 8, "left_index"],
+#         ['LeftHandPinky1', 11, 8, "left_pinky"],
+
+#         ['RightArm', 12, 3, "right_shoulder"],
+#         ['RightForeArm', 13, 12, "right_elbow"],
+#         ['RightHand', 14, 13, "right_wrist"],
+#         ['RightHandThumb1', 15, 14, "right_thumb"],
+#         ['RightHandIndex1', 16, 14, "right_index"],
+#         ['RightHandPinky1', 17, 14, "right_pinky"],
+
+#         ['LeftUpLeg', 18, 0, "left_hip"],
+#         ['LeftLeg', 19, 18, "left_knee"],
+#         ['LeftFoot', 20, 19, "left_ankle"],
+#         ['LeftToeBase', 21, 20, "left_foot_index"],
+
+#         ['RightUpLeg', 22, 0, "right_hip"],
+#         ['RightLeg', 23, 22, "right_knee"],
+#         ['RightFoot', 24, 23, "right_ankle"],
+#         ['RightToeBase', 25, 24, "right_foot_index"]
+#     ]
+
+def get_mixamo_names():
+    return [
+        ['mixamorig:Hips', 0, -1],  # left hip <->right hip
+        ['mixamorig:Spine', 1, 0],
+        ['mixamorig:Spine1', 2, 1],
+        ['mixamorig:Spine2', 3, 2],
+
+        ['mixamorig:Neck', 4, 3],  # left_shoulder <-> right_shoulder
+        ['mixamorig:Head', 5, 4, "Nose"],  # left_ear <-> right_ear
+
+        ['mixamorig:LeftArm', 6, 3, "LeftShoulder"],
+        ['mixamorig:LeftForeArm', 7, 6, "LeftElbow"],
+        ['mixamorig:LeftHand', 8, 7, "LeftWrist"],
+        ['mixamorig:LeftHandThumb1', 9, 8, "LeftThumbEndSite"],
+        ['mixamorig:LeftHandIndex1', 10, 8, "LeftIndexEndSite"],
+        ['mixamorig:LeftHandPinky1', 11, 8, "LeftPinkyEndSite"],
+
+        ['mixamorig:RightArm', 12, 3, "RightShoulder"],
+        ['mixamorig:RightForeArm', 13, 12, "RightElbow"],
+        ['mixamorig:RightHand', 14, 13, "RightWrist"],
+        ['mixamorig:RightHandThumb1', 15, 14, "RightThumbEndSite"],
+        ['mixamorig:RightHandIndex1', 16, 14, "RightIndexEndSite"],
+        ['mixamorig:RightHandPinky1', 17, 14, "RightPinkyEndSite"],
+
+        ['mixamorig:LeftUpLeg', 18, 0, "LeftHip"],
+        ['mixamorig:LeftLeg', 19, 18, "LeftKnee"],
+        ['mixamorig:LeftFoot', 20, 19, "LeftAnkle"],
+        ['mixamorig:LeftToeBase', 21, 20, "LeftFootIndexEndSite"],
+
+        ['mixamorig:RightUpLeg', 22, 0, "RightHip"],
+        ['mixamorig:RightLeg', 23, 22, "RightKnee"],
+        ['mixamorig:RightFoot', 24, 23, "RightAnkle"],
+        ['mixamorig:RightToeBase', 25, 24, "RightFootIndexEndSite"]
+    ]
+
+
+
 
 # mediapipe joints
 landmark_names = [
@@ -35,6 +116,7 @@ landmark_names = [
 
     'LeftEarEndSite', 'RightEarEndSite',
     'LeftMouth', 'RightMouth',
+
     'LeftShoulder', "RightShoulder",
     "LeftElbow", "RightElbow",
     "LeftWrist", "RightWrist",
@@ -49,15 +131,27 @@ landmark_names = [
 ]
 
 # bvh joints
+# joint_list = [
+#     'MidHip',
+#     'RightHip', 'RightKnee', 'RightAnkle', 'RightHeelEndSite', 'RightFootIndexEndSite',
+#     'LeftHip', 'LeftKnee', 'LeftAnkle', 'LeftHeelEndSite', 'LeftFootIndexEndSite',
+#     'Spine', 'Nose',
+#     'MidShoulder',
+#     'LeftShoulder', 'LeftElbow', 'LeftWrist', 'LeftPinkyEndSite', 'LeftIndexEndSite', 'LeftThumbEndSite',
+#     'RightShoulder', 'RightElbow', 'RightWrist', 'RightPinkyEndSite', 'RightIndexEndSite', 'RightThumbEndSite'
+# ]
+
 joint_list = [
-    'MidHip',
-    'RightHip', 'RightKnee', 'RightAnkle', 'RightHeelEndSite', 'RightFootIndexEndSite',
-    'LeftHip', 'LeftKnee', 'LeftAnkle', 'LeftHeelEndSite', 'LeftFootIndexEndSite',
-    'Spine', 'Nose',
-    'MidShoulder',
-    'LeftShoulder', 'LeftElbow', 'LeftWrist', 'LeftPinkyEndSite', 'LeftIndexEndSite', 'LeftThumbEndSite',
-    'RightShoulder', 'RightElbow', 'RightWrist', 'RightPinkyEndSite', 'RightIndexEndSite', 'RightThumbEndSite'
-]
+        'mixamorig:Hips',
+        'mixamorig:Spine', 'mixamorig:Spine1', 'mixamorig:Spine2', 'mixamorig:Neck', 'mixamorig:Head',
+        'mixamorig:LeftArm', 'mixamorig:LeftForeArm', 'mixamorig:LeftHand',
+        'mixamorig:RightArm', 'mixamorig:RightForeArm', 'mixamorig:RightHand',
+        'mixamorig:LeftUpLeg', 'mixamorig:LeftLeg', 'mixamorig:LeftFoot',
+        'mixamorig:RightUpLeg', 'mixamorig:RightLeg', 'mixamorig:RightFoot'
+    ]
+
+
+#Mixamo joints
 
 
 def run_mp(streams, projections,num_cams,bool_list,vid_output_pth):
@@ -291,33 +385,6 @@ def get_spine(a, b):
     center = (mid_shoulder - mid_hip) * 0.5 + mid_hip
     return center
 
-
-def write_mediapipe_bvh(outbvhfilepath, prediction3dpoint,fps):
-    bvhfileName = outbvhfilepath
-    skeleton = mediapipe_skeleton.MediapipeSkeleton()
-    # print("mp skeleton", mediapipe_skeleton)
-    skeleton.poses2bvh(prediction3dpoint, output_file=bvhfileName,fps=fps)
-    print("=BVH file saved: ", bvhfileName)
-    
-
-def SelectCam(num_cams):
-    #if there are total 8 cameras, and we want to select 4 cameras, 
-    # then the bool_list will be [1,0,1,0,1,0,1,0]
-    selected_cams = input("Enter camera indices (comma-separated, e.g., 1,3,6): ")
-    #if null, then select 1~4 cameras
-    if selected_cams == "":
-        selected_cams = "1,2"
-    selected_cams = selected_cams.split(',')
-    # print(selected_cams)
-    #generate a list of booleans
-    bool_list = [0]*num_cams
-    for i in selected_cams:
-        bool_list[int(i)-1] = 1
-    print(bool_list)
-
-    return bool_list
-
-
 def process_file(keypoints_input,outputfile,fps):
     predictions = read_keypoints(keypoints_input)
     predictions_copy = np.zeros((predictions.shape[0], 26, 3))
@@ -341,6 +408,229 @@ def process_file(keypoints_input,outputfile,fps):
     print("Generating bvh...")
     print("FRAME NUM:",predictions_copy.shape[0])
     write_mediapipe_bvh(outputfile, predictions_copy,fps)
+
+def write_mediapipe_bvh(outbvhfilepath, prediction3dpoint,fps):
+    bvhfileName = outbvhfilepath
+    skeleton = mediapipe_skeleton.MediapipeSkeleton()
+    # print("mp skeleton", mediapipe_skeleton)
+    skeleton.poses2bvh(prediction3dpoint, output_file=bvhfileName,fps=fps)
+    print("=BVH file saved: ", bvhfileName)
+    
+
+def main(args):
+    ''' this will load the sample videos if no camera ID is given '''
+    print("=Running mediapipe pose estimation...")
+    streams = []
+    projections=[]
+
+    ################################################################
+
+    cam_parm_folder = "public/exp/{}".format(args["type"])
+    motion_folder = cam_parm_folder
+    vid_output_pth= cam_parm_folder + "/{}_skeleton{}.mp4".format(args["type"],args["num"])
+    ################################################################
+
+    #get # of video 
+    video_files = sorted(glob.glob(f"{motion_folder}/cam*.mp4"))
+    num_cams = len(video_files)
+    print("=Number of all cameras: ", num_cams)
+
+    for idx in range(1, num_cams+1):
+        print("=Loading video: ", "{}/cam{}.mp4".format(motion_folder,idx))
+        streams.append(f"{motion_folder}/cam{idx}.mp4")
+        intrinsic = "{}/cam{}.dat".format(cam_parm_folder,idx)
+        extrinsic = "{}/rot_trans_cam{}.dat".format(cam_parm_folder, idx)
+
+        ''' get projection matrices '''
+        projections.append(get_projection_matrix(intrinsic, extrinsic))
+
+    print("=Please select the cameras you want to use: ")
+    bool_list = SelectCam(num_cams)
+    
+
+    # keypoints after multi-mediapipe & Triangulation
+    kpts_3d = run_mp(streams, projections,num_cams,bool_list,vid_output_pth)
+        
+
+    # get the fps of the stream
+    cap = cv2.VideoCapture(streams[0])
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    # adjusted_fps fps to integer
+    adjusted_fps = math.ceil(fps)
+    print("=Adjusted fps: ", adjusted_fps)
+    cap.release()
+
+    
+    ############################################################################
+ 
+    keypoint_path = "{}/kpts_3d_{}.json".format(motion_folder, args["type"])#this will create keypoints file in current working folder
+    keypoint_path = motion_folder + '/kpts_3d_{}.dat'.format(args["type"])
+    write_keypoints_to_disk(keypoint_path, kpts_3d)
+    print('Reading keypoints ...')
+    # writing bvh
+    process_file(keypoint_path
+                 ,"{}/kpts_3d_{}{}.bvh".format(
+                     motion_folder, 
+                     args["type"],
+                     args["num"]),fps)
+    print("=bvh file saved: ", "{}/kpts_3d_{}.bvh".format(motion_folder, args["type"]))
+
+    ############################################################################
+
+
+    
+
+    ############################################################################
+    
+    # 轉換 3D 關鍵點數據為 Mixamo 格式的 JSON
+    animation_name = "{}_skeleton{}".format(args["type"],args["num"])
+    anim_json = convert_keypoints_to_mixamo_format(kpts_3d, animation_name)
+
+    mixamo_keypoint_path = motion_folder + '/mixamo_kpts_3d_{}.json'.format(args["type"])
+    
+    ############################################################################
+    #write
+    with open(mixamo_keypoint_path, "w") as f:
+        json.dump(anim_json, f,indent=2)
+
+
+
+    #write kp3d to json
+    # write_keypoints_to_disk(motion_folder + '/kpts_3d_structure.json'.format(args["type"]), kpts_3d)
+    # print(f"JSON file has been saved to: {mixamo_keypoint_path}")
+    
+def map_mediapipe_to_mixamo(bone_name, frame_keypoints, name_idx_map):
+    """将 Mediapipe 的关节名称映射到 Mixamo 的对应名称"""
+    position = {"x": 0.0, "y": 0.0, "z": 0.0}  # 默认值
+
+    if bone_name == 'mixamorig:Hips':
+        left_hip_idx = name_idx_map["LeftHip"]
+        right_hip_idx = name_idx_map["RightHip"]
+        position = {
+            "x": (frame_keypoints[left_hip_idx][0] + frame_keypoints[right_hip_idx][0]) / 2 * 100,
+            "y": (frame_keypoints[left_hip_idx][1] + frame_keypoints[right_hip_idx][1]) / 2 * 100,
+            "z": (frame_keypoints[left_hip_idx][2] + frame_keypoints[right_hip_idx][2]) / 2 * 100
+        }
+    elif bone_name == 'mixamorig:Neck':
+        left_shoulder_idx = name_idx_map["LeftShoulder"]
+        right_shoulder_idx = name_idx_map["RightShoulder"]
+        position = {
+            "x": (frame_keypoints[left_shoulder_idx][0] + frame_keypoints[right_shoulder_idx][0]) / 2 * 100,
+            "y": (frame_keypoints[left_shoulder_idx][1] + frame_keypoints[right_shoulder_idx][1]) / 2 * 100,
+            "z": (frame_keypoints[left_shoulder_idx][2] + frame_keypoints[right_shoulder_idx][2]) / 2 * 100
+        }
+    elif bone_name == 'mixamorig:Spine1':
+        hip_idx = 0
+        neck_idx = 4
+        position = {
+            "x": (frame_keypoints[hip_idx][0] + frame_keypoints[neck_idx][0]) / 2 * 100,
+            "y": (frame_keypoints[hip_idx][1] + frame_keypoints[neck_idx][1]) / 2 * 100,
+            "z": (frame_keypoints[hip_idx][2] + frame_keypoints[neck_idx][2]) / 2 * 100
+        }
+    elif bone_name == 'mixamorig:Spine2':
+        spine1_idx = 2
+        neck_idx = 4
+        position = {
+            "x": (frame_keypoints[spine1_idx][0] + frame_keypoints[neck_idx][0]) / 2 * 100,
+            "y": (frame_keypoints[spine1_idx][1] + frame_keypoints[neck_idx][1]) / 2 * 100,
+            "z": (frame_keypoints[spine1_idx][2] + frame_keypoints[neck_idx][2]) / 2 * 100
+        }
+    elif bone_name == 'mixamorig:Spine':
+        spine1_idx = 2
+        hip_idx = 0
+        position = {
+            "x": (frame_keypoints[spine1_idx][0] + frame_keypoints[hip_idx][0]) / 2 * 100,
+            "y": (frame_keypoints[spine1_idx][1] + frame_keypoints[hip_idx][1]) / 2 * 100,
+            "z": (frame_keypoints[spine1_idx][2] + frame_keypoints[hip_idx][2]) / 2 * 100
+        }
+    else:
+        mediapipe_name = bone_name.split(':')[-1] if ':' in bone_name else bone_name
+        if mediapipe_name in name_idx_map:
+            keypoint_idx = name_idx_map[mediapipe_name]
+            position = {
+                "x": frame_keypoints[keypoint_idx][0] * 100,
+                "y": frame_keypoints[keypoint_idx][1] * 100,
+                "z": frame_keypoints[keypoint_idx][2] * 100
+            }
+
+    return position
+
+def convert_keypoints_to_mixamo_format(kpts_3d, animation_name="ConvertedAnimation"):
+    """
+    Convert 3D keypoints data to the Mixamo format JSON file structure.
+
+    Parameters:
+    kpts_3d (numpy array): 3D keypoints data of shape (num_frames, num_keypoints, 3)
+    animation_name (str): The name for the animation file.
+
+    Returns:
+    dict: JSON structure in Mixamo format
+    """
+    anim_result_json = {
+        "fileName": animation_name,
+        "duration": 0,
+        "ticksPerSecond": 30,  # Default ticks per second
+        "frames": []
+    }
+
+    name_idx_map = get_name_idx_map(landmark_names)
+    mixamo_names = get_mixamo_names()
+
+    for frame_idx, frame_keypoints in enumerate(kpts_3d):
+        bones_json = {
+            "time": frame_idx / 30,  # Assuming 30 FPS as ticksPerSecond
+            "bones": []
+        }
+
+        for bone in mixamo_names:
+            bone_name = bone[0]
+            position = map_mediapipe_to_mixamo(bone_name, frame_keypoints, name_idx_map)
+
+            bones_json["bones"].append({
+                "name": bone_name,
+                "position": position,
+                "rotation": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0}
+            })
+
+        anim_result_json["frames"].append(bones_json)
+
+    anim_result_json["duration"] = len(kpts_3d) / anim_result_json["ticksPerSecond"]
+
+    return anim_result_json
+
+if __name__ == "__main__":
+
+    frame_by_frame = False
+    #construct ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser()
+
+    ap.add_argument("-type", "--type", type=str, required=False,
+	                help="sports type",default="demo")
+    ap.add_argument("-num", "---num", type=str, required=False,
+	                help="player number#. This parameter is for different pose in same scene.",default="")
+
+    args = vars(ap.parse_args())
+    main(args)
+
+
+def SelectCam(num_cams):
+    #if there are total 8 cameras, and we want to select 4 cameras, 
+    # then the bool_list will be [1,0,1,0,1,0,1,0]
+    selected_cams = input("Enter camera indices (comma-separated, e.g., 1,3,6): ")
+    #if null, then select 1~4 cameras
+    if selected_cams == "":
+        selected_cams = "1,2"
+    selected_cams = selected_cams.split(',')
+    # print(selected_cams)
+    #generate a list of booleans
+    bool_list = [0]*num_cams
+    for i in selected_cams:
+        bool_list[int(i)-1] = 1
+    print(bool_list)
+
+    return bool_list
+
+
 
 def plot_3d_skeleton(joints):
     fig = plt.figure()
@@ -485,73 +775,3 @@ def crop_image(image,area='left_buttom'):
     cropped_image= image[y1:y2,x1:x2]
 
     return cropped_image
-
-
-def main(args):
-    ''' this will load the sample videos if no camera ID is given '''
-    print("=Running mediapipe pose estimation...")
-    streams = []
-    projections=[]
-
-    ################################################################
-
-    cam_parm_folder = "public/exp/{}".format(args["type"])
-    motion_folder = cam_parm_folder
-    vid_output_pth= cam_parm_folder + "/{}_skeleton{}.mp4".format(args["type"],args["num"])
-    ################################################################
-
-    #get # of video 
-    video_files = sorted(glob.glob(f"{motion_folder}/cam*.mp4"))
-    num_cams = len(video_files)
-    print("=Number of all cameras: ", num_cams)
-
-    for idx in range(1, num_cams+1):
-        print("=Loading video: ", "{}/cam{}.mp4".format(motion_folder,idx))
-        streams.append(f"{motion_folder}/cam{idx}.mp4")
-        intrinsic = "{}/cam{}.dat".format(cam_parm_folder,idx)
-        extrinsic = "{}/rot_trans_cam{}.dat".format(cam_parm_folder, idx)
-
-        ''' get projection matrices '''
-        projections.append(get_projection_matrix(intrinsic, extrinsic))
-
-    print("=Please select the cameras you want to use: ")
-    bool_list = SelectCam(num_cams)
-    
-
-    kpts_3d = run_mp(streams, projections,num_cams,bool_list,vid_output_pth)
-    
-    
-
-
-    # get the fps of the stream
-    cap = cv2.VideoCapture(streams[0])
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    # adjusted_fps fps to integer
-    adjusted_fps = math.ceil(fps)
-    print("=Adjusted fps: ", adjusted_fps)
-    cap.release()
-
-    #this will create keypoints file in current working folder
-    keypoint_file = motion_folder + '/kpts_3d_{}.dat'.format(args["type"])
-    write_keypoints_to_disk(keypoint_file, kpts_3d)
-    print('Reading keypoints ...')
-    process_file(keypoint_file
-                 ,"{}/kpts_3d_{}{}.bvh".format(
-                     motion_folder, 
-                     args["type"],
-                     args["num"]),fps)
-    # print("=bvh file saved: ", "{}/kpts_3d_{}.bvh".format(motion_folder, args["type"]))
-
-
-if __name__ == "__main__":
-    frame_by_frame = False
-    #construct ap = argparse.ArgumentParser()
-    ap = argparse.ArgumentParser()
-
-    ap.add_argument("-type", "--type", type=str, required=False,
-	                help="sports type",default="demo")
-    ap.add_argument("-num", "---num", type=str, required=False,
-	                help="player number#. This parameter is for different pose in same scene.",default="")
-
-    args = vars(ap.parse_args())
-    main(args)

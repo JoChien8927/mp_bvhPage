@@ -2,6 +2,8 @@ import cv2
 import os
 import numpy as np
 import math
+import json
+
 
 from scipy import linalg
 def _make_homogeneous_rep_matrix(R, t):
@@ -106,14 +108,6 @@ def read_rotation_translation(extrinsic):
     inf.close()
     return np.array(rot), np.array(trans)
 
-def _convert_to_homogeneous(pts):
-    pts = np.array(pts)
-    if len(pts.shape) > 1:
-        w = np.ones((pts.shape[0], 1))
-        return np.concatenate([pts, w], axis = 1)
-    else:
-        return np.concatenate([pts, [1]], axis = 0)
-
 def get_projection_matrix(intrisnic, extrinsic):
 
     #read camera parameters
@@ -124,22 +118,44 @@ def get_projection_matrix(intrisnic, extrinsic):
     P = cmtx @ _make_homogeneous_rep_matrix(rvec, tvec)[:3,:]
     return P
 
-def write_keypoints_to_disk(filename, kpts):
-    fout = open(filename, 'w')
-    try:
-        print(f"Data written to {filename}")
-    except Exception as e:
-        print(f"Failed to write data to {filename}: {e}")
-        
-    for frame_kpts in kpts:
-        for kpt in frame_kpts:
-            if len(kpt) == 2:
-                fout.write(str(kpt[0]) + ' ' + str(kpt[1]) + ' ')
-            else:
-                fout.write(str(kpt[0]) + ' ' + str(kpt[1]) + ' ' + str(kpt[2]) + ' ')
 
-        fout.write('\n')
-    fout.close()
+
+def write_keypoints_to_disk(filepath,joints_list, kpts_3d):
+    # 準備要寫入的數據
+    frames_data = []
+    for frame_idx, keypoints in enumerate(kpts_3d):
+        keypoints_data = []
+        for i, keypoint in enumerate(keypoints):
+            keypoint_data = {
+                "name": joints_list[i],  # 對應的 joint 名稱
+                "coordinates": keypoint.tolist()  # 將 numpy array 轉換為列表
+            }
+            keypoints_data.append(keypoint_data)
+        
+        frame_data = {
+            "frame": frame_idx,
+            "keypoints": keypoints_data
+        }
+        frames_data.append(frame_data)
+    
+    # 添加數據形狀信息
+    data_info = {
+        "num_frames": kpts_3d.shape[0],
+        "num_keypoints": kpts_3d.shape[1],
+        "dimensions": kpts_3d.shape[2]
+    }
+    
+    # 構建最終輸出結構
+    output_data = {
+        "shape": data_info,
+        "data": frames_data
+    }
+    
+    # 將數據寫入 JSON 文件
+    with open(filepath, 'w') as outfile:
+        json.dump(output_data, outfile, indent=2)
+
+    print(f"Keypoints data has been saved to: {filepath}")
 
 def dynamic_frame_concatenate(frames, h, w):
     # Determine grid size (number of rows and columns)
