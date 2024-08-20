@@ -58,8 +58,10 @@ class BaseballWorkspace extends React.Component {
         },
         currentSportType: this.props.sportType, // Initialize currentSportType from props
         motion_fps : this.props.fps,
-        skeleton_path: process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/kpts_3d_"+this.props.sportType+".bvh",
-        secondSkeletonPath: process.env.PUBLIC_URL + "/exp/demo/kpts_3d_demo1.bvh", // New BVH file path
+        // skeleton_path: process.env.PUBLIC_URL+"/exp/"+this.props.sportType+"/kpts_3d_"+this.props.sportType+".bvh",
+        skeleton_path: `${process.env.PUBLIC_URL}/exp/${this.props.exp}/${this.props.num}/kpts_3d_${this.props.num}_pitch.bvh`,
+
+        secondSkeletonPath: `${process.env.PUBLIC_URL}/exp/${this.props.exp}/${this.props.num}/kpts_3d_${this.props.num}_bat.bvh`, // New BVH file path
         bat_motion : process.env.PUBLIC_URL+"/exp/"+"demo"+"/bat_motion.json",
         baseball_motion : process.env.PUBLIC_URL+"/exp/"+"demo"+"/baseball_motion.json",
       };
