@@ -462,7 +462,7 @@ def run_mp(streams, projections,num_cams,bool_list,vid_output_pth):
         
         #write the frame to video named "output.mp4"
         videoWriter.write(ConcatFrame)
-        cv2.imshow('Concat Frame', ConcatFrame)
+        cv2.imshow('Concat Frame_'+args['stage']+"_"+args["type"], ConcatFrame)
 
         
         k = cv2.waitKey(1)
@@ -690,9 +690,9 @@ def main(args):
 
     ################################################################
 
-    cam_parm_folder = "public/exp/{}".format(args["stage"])
-    motion_folder = cam_parm_folder
-    vid_output_pth= cam_parm_folder + "/{}_skeleton_{}.mp4".format(args["stage"],args["type"])
+    root_folder = "public/exp/{}".format(args["stage"])
+    motion_folder = root_folder
+    vid_output_pth= root_folder + "/{}_skeleton_{}.mp4".format(args["stage"],args["type"])
     ################################################################
 
     #get # of video 
@@ -703,8 +703,8 @@ def main(args):
     for idx in range(1, num_cams+1):
         print("=Loading video: ", "{}/cam{}.mp4".format(motion_folder,idx))
         streams.append(f"{motion_folder}/cam{idx}.mp4")
-        intrinsic = "{}/cam_matrix/cam{}.dat".format(cam_parm_folder,idx)
-        extrinsic = "{}/cam_matrix/rot_trans_cam{}.dat".format(cam_parm_folder, idx)
+        intrinsic = "{}/cam_matrix/cam{}.dat".format(root_folder,idx)
+        extrinsic = "{}/cam_matrix/rot_trans_cam{}.dat".format(root_folder, idx)
 
         ''' get projection matrices '''
         projections.append(get_projection_matrix(intrinsic, extrinsic))
